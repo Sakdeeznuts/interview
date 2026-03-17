@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrepAI — Interview Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSS VARIABLES & RESET
+   ============================================================ */
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #18181f;
+  --card: #1c1c25;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --accent: #6c63ff;
+  --accent2: #a78bfa;
+  --accent-glow: rgba(108,99,255,0.25);
+  --green: #34d399;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --text: #f0f0f8;
+  --text2: #9090a8;
+  --text3: #5c5c72;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --font-display: 'DM Serif Display', serif;
+  --font: 'DM Sans', sans-serif;
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   NOISE TEXTURE + BACKGROUND EFFECTS
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(108,99,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(167,139,250,0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   PAGES
+   ============================================================ */
+.page { display: none; min-height: 100vh; position: relative; z-index: 1; }
+.page.active { display: flex; flex-direction: column; }
+
+/* ============================================================
+   LANDING PAGE
+   ============================================================ */
+#page-landing {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.landing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(108,99,255,0.12);
+  border: 1px solid rgba(108,99,255,0.3);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--accent2);
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s ease both;
+}
+
+.landing-badge .dot {
+  width: 6px; height: 6px;
+  background: var(--accent2);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.landing-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1.05;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.landing-title .gradient-text {
+  background: linear-gradient(135deg, #6c63ff 0%, #a78bfa 50%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.landing-sub {
+  font-size: 1.2rem;
+  color: var(--text2);
+  max-width: 480px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.7;
+  font-weight: 300;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 16px 36px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 0 40px var(--accent-glow);
+  animation: fadeUp 0.6s 0.3s ease both;
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover {
+  background: #7c73ff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 60px rgba(108,99,255,0.4);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.landing-features {
+  display: flex;
+  gap: 2rem;
+  margin-top: 4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.feature-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text2);
+  font-size: 14px;
+}
+.feature-pill .icon { font-size: 18px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   SETUP PAGE
+   ============================================================ */
+#page-setup {
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.setup-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  max-width: 560px;
+  width: 100%;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease both;
+}
+
+.setup-card h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.setup-card p {
+  color: var(--text2);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.form-group { margin-bottom: 1.5rem; }
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.95rem;
+  transition: var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.select-wrapper { position: relative; }
+.select-wrapper::after {
+  content: '▾';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  pointer-events: none;
+}
+
+/* Toggle chips */
+.chip-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip {
+  padding: 8px 20px;
+  border-radius: 100px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text2);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font);
+}
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.chip.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode-card {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+.mode-card:hover { border-color: var(--accent); }
+.mode-card.selected {
+  border-color: var(--accent);
+  background: rgba(108,99,255,0.1);
+}
+.mode-card .mode-icon { font-size: 28px; margin-bottom: 6px; }
+.mode-card .mode-title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+.mode-card .mode-desc { font-size: 12px; color: var(--text2); }
+
+/* ============================================================
+   HEADER (for interview + result pages)
+   ============================================================ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,10,15,0.8);
+  backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-logo {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
+}
+.header-logo span { color: var(--accent2); }
+
+.header-info { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.info-badge {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* Timer */
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.3);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--yellow);
+  font-variant-numeric: tabular-nums;
+}
+.timer.warning {
+  background: rgba(248,113,113,0.1);
+  border-color: rgba(248,113,113,0.3);
+  color: var(--red);
+  animation: timerPulse 0.8s ease infinite;
+}
+@keyframes timerPulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Progress bar */
+.progress-bar-wrap {
+  width: 100%;
+  height: 3px;
+  background: var(--bg3);
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.5s ease;
+}
+
+/* ============================================================
+   INTERVIEW PAGE
+   ============================================================ */
+#page-interview {
+  flex-direction: column;
+}
+
+.interview-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  gap: 1.5rem;
+}
+
+/* Chat bubbles */
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 200px;
+}
+
+.chat-msg {
+  display: flex;
+  gap: 12px;
+  animation: fadeUp 0.3s ease both;
+}
+
+.chat-msg.user { flex-direction: row-reverse; }
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.avatar.ai {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+}
+.avatar.user-av {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 14px 18px;
+  border-radius: 18px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+.bubble.ai {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-top-left-radius: 4px;
+  color: var(--text);
+}
+.bubble.user {
+  background: var(--accent);
+  border-top-right-radius: 4px;
+  color: #fff;
+}
+.bubble .q-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent2);
+  margin-bottom: 6px;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  gap: 12px;
+  animation: fadeUp 0.3s ease both;
+}
+.typing-dots {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  border-top-left-radius: 4px;
+  padding: 14px 18px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.typing-dots span {
+  width: 7px; height: 7px;
+  background: var(--text3);
+  border-radius: 50%;
+  animation: typing 1.2s ease infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Answer section */
+.answer-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.answer-section textarea {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.95rem;
+  resize: none;
+  min-height: 110px;
+  transition: var(--transition);
+  line-height: 1.6;
+}
+.answer-section textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.answer-section textarea::placeholder { color: var(--text3); }
+
+.answer-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-voice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 10px 18px;
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-voice:hover { border-color: var(--accent); color: var(--accent2); }
+.btn-voice.recording {
+  background: rgba(248,113,113,0.1);
+  border-color: var(--red);
+  color: var(--red);
+  animation: recordPulse 1s ease infinite;
+}
+@keyframes recordPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(248,113,113,0); }
+}
+
+.btn-submit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-submit:hover { background: #7c73ff; transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-skip {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 10px 18px;
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: var(--transition);
+}
+.btn-skip:hover { border-color: var(--text2); color: var(--text); }
+
+/* ============================================================
+   FEEDBACK CARD
+   ============================================================ */
+.feedback-card {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  animation: fadeUp 0.4s ease both;
+}
+
+.feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.score-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: 700;
+  border: 3px solid;
+}
+.score-badge.high { border-color: var(--green); color: var(--green); }
+.score-badge.mid { border-color: var(--yellow); color: var(--yellow); }
+.score-badge.low { border-color: var(--red); color: var(--red); }
+
+.feedback-title { font-weight: 600; font-size: 1.05rem; margin-bottom: 4px; }
+.feedback-sub { font-size: 13px; color: var(--text2); }
+
+.toggle-detail-btn {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 6px 14px;
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: var(--transition);
+}
+.toggle-detail-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+/* Score bars */
+.score-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 1rem 0; }
+.score-bar-item { }
+.score-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 5px;
+}
+.score-bar-track {
+  height: 6px;
+  background: var(--bg2);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+
+.feedback-sections { display: flex; flex-direction: column; gap: 10px; margin-top: 1rem; }
+.feedback-section { }
+.feedback-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.feedback-section-label.green { color: var(--green); }
+.feedback-section-label.yellow { color: var(--yellow); }
+.feedback-section-label.blue { color: var(--accent2); }
+.feedback-section p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.ideal-answer {
+  background: rgba(108,99,255,0.08);
+  border: 1px solid rgba(108,99,255,0.2);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-top: 1rem;
+}
+.ideal-answer-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.ideal-answer p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.detail-section { display: none; }
+.detail-section.open { display: block; }
+
+/* ============================================================
+   LOADING OVERLAY
+   ============================================================ */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  gap: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.loading-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.spinner {
+  width: 52px; height: 52px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: var(--text2); font-size: 14px; text-align: center; }
+.loading-text strong { color: var(--text); display: block; font-size: 1.1rem; margin-bottom: 4px; }
+
+/* ============================================================
+   RESULT PAGE
+   ============================================================ */
+#page-result {
+  flex-direction: column;
+}
+
+.result-body {
+  flex: 1;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.result-hero {
+  text-align: center;
+  padding: 2.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.result-score-ring {
+  width: 140px; height: 140px;
+  margin: 0 auto 1.5rem;
+  position: relative;
+}
+.result-score-ring svg { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--bg3); stroke-width: 12; }
+.ring-fill {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+.ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ring-score { font-size: 2.2rem; font-weight: 700; }
+.ring-label { font-size: 12px; color: var(--text2); }
+
+.result-verdict { font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 0.5rem; }
+.result-verdict-sub { color: var(--text2); font-size: 0.95rem; }
+
+.chances-bar {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.chances-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.chances-label h3 { font-weight: 600; }
+.chances-pct { font-size: 1.4rem; font-weight: 700; color: var(--green); }
+
+.big-bar-track {
+  height: 12px;
+  background: var(--bg2);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.big-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.breakdown-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.breakdown-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.2rem;
+}
+.breakdown-card .bc-label { font-size: 13px; color: var(--text2); margin-bottom: 6px; }
+.breakdown-card .bc-value { font-size: 1.6rem; font-weight: 700; }
+
+.tips-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.tips-section h3 { font-weight: 600; margin-bottom: 1rem; }
+.tip-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.tip-item:last-child { border-bottom: none; }
+.tip-icon { flex-shrink: 0; }
+
+.result-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn-secondary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 14px 24px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent2); }
+.btn-secondary.primary-action {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-secondary.primary-action:hover { background: #7c73ff; }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+.hidden { display: none !important; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  .score-bars { grid-template-columns: 1fr; }
+  .breakdown-grid { grid-template-columns: 1fr; }
+  .mode-cards { grid-template-columns: 1fr; }
+  .landing-features { gap: 1rem; }
+  .header { padding: 0.75rem 1rem; }
+  .interview-body, .result-body { padding: 1rem; }
+  .setup-card { padding: 1.5rem; }
+  .bubble { max-width: 85%; }
+  .answer-actions { flex-direction: column; }
+  .btn-submit, .btn-skip { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOADING OVERLAY
+     ============================================================ -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">
+    <strong id="loading-title">Generating feedback...</strong>
+    <span id="loading-sub">Analysing your answer with AI</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 1: LANDING
+     ============================================================ -->
+<div class="page active" id="page-landing">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:2rem;">
+    <div class="landing-badge">
+      <span class="dot"></span>
+      AI-Powered · Real-time Feedback
+    </div>
+    <h1 class="landing-title">
+      Ace Your Next<br>
+      <span class="gradient-text">Interview</span>
+    </h1>
+    <p class="landing-sub">
+      Practice with an AI interviewer, get instant feedback, and walk into any interview with confidence.
+    </p>
+    <button class="btn-primary" onclick="goTo('page-setup')">
+      Start Practicing
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="landing-features">
+      <div class="feature-pill"><span class="icon">🎯</span> Role-specific questions</div>
+      <div class="feature-pill"><span class="icon">🎙️</span> Voice input support</div>
+      <div class="feature-pill"><span class="icon">🤖</span> AI-powered scoring</div>
+      <div class="feature-pill"><span class="icon">📊</span> Detailed analytics</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 2: SETUP
+     ============================================================ -->
+<div class="page" id="page-setup">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:2rem;">
+    <div class="setup-card">
+      <h2>Set Up Your Interview</h2>
+      <p>Tell us about yourself so we can tailor the experience.</p>
+
+      <div class="form-group">
+        <label>Job Role</label>
+        <div class="select-wrapper">
+          <select id="job-role">
+            <option value="Software Developer">💻 Software Developer</option>
+            <option value="Frontend Developer">🎨 Frontend Developer</option>
+            <option value="Data Analyst">📊 Data Analyst</option>
+            <option value="Data Scientist">🧠 Data Scientist</option>
+            <option value="Product Manager">📋 Product Manager</option>
+            <option value="UI/UX Designer">✏️ UI/UX Designer</option>
+            <option value="HR Manager">👥 HR Manager</option>
+            <option value="Marketing Analyst">📣 Marketing Analyst</option>
+            <option value="Business Analyst">📈 Business Analyst</option>
+            <option value="DevOps Engineer">⚙️ DevOps Engineer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Experience Level</label>
+        <div class="chip-group">
+          <button class="chip selected" onclick="selectChip(this, 'level')">👶 Fresher</button>
+          <button class="chip" onclick="selectChip(this, 'level')">🎓 Student</button>
+          <button class="chip" onclick="selectChip(this, 'level')">🚀 1-2 Years Exp</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Number of Questions</label>
+        <div class="chip-group">
+          <button class="chip" onclick="selectChip(this, 'count')">3 Quick</button>
+          <button class="chip selected" onclick="selectChip(this, 'count')">5 Standard</button>
+          <button class="chip" onclick="selectChip(this, 'count')">8 Full Round</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Input Mode</label>
+        <div class="mode-cards">
+          <div class="mode-card selected" onclick="selectMode('text', this)">
+            <div class="mode-icon">⌨️</div>
+            <div class="mode-title">Text Input</div>
+            <div class="mode-desc">Type your answers</div>
+          </div>
+          <div class="mode-card" onclick="selectMode('voice', this)">
+            <div class="mode-icon">🎙️</div>
+            <div class="mode-title">Voice Input</div>
+            <div class="mode-desc">Speak your answers</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem" onclick="startInterview()">
+        Begin Interview →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 3: INTERVIEW
+     ============================================================ -->
+<div class="page" id="page-interview">
+  <div class="header">
+    <div class="header-logo">Prep<span>AI</span></div>
+    <div class="header-info">
+      <div class="info-badge" id="role-badge">Role</div>
+      <div class="info-badge" id="q-counter">Q 1/5</div>
+      <div class="timer" id="timer">⏱ 2:00</div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <div class="interview-body">
+    <div class="chat-window" id="chat-window"></div>
+
+    <div class="answer-section" id="answer-section">
+      <textarea id="answer-input" placeholder="Type your answer here... Be specific and use examples where possible."></textarea>
+      <div class="answer-actions">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn-voice" id="voice-btn" onclick="toggleVoice()">
+            <span>🎙️</span> <span id="voice-label">Use Voice</span>
+          </button>
+          <button class="btn-skip" onclick="skipQuestion()">Skip →</button>
+        </div>
+        <button class="btn-submit" id="submit-btn" onclick="submitAnswer()">
+          Submit Answer
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PAGE 4: RESULT
+     ============================================================ -->
+<div class="page" id="page-result">
+  <div class="header">
+    <div class="header-logo">Prep<span>AI</span></div>
+    <div class="header-info">
+      <div class="info-badge" id="result-role-badge">Role</div>
+      <div class="info-badge" id="result-q-badge">5 Questions</div>
+    </div>
+  </div>
+
+  <div class="result-body">
+
+    <div class="result-hero">
+      <div class="result-score-ring">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle class="ring-track" cx="70" cy="70" r="58"/>
+          <circle class="ring-fill" id="ring-fill" cx="70" cy="70" r="58"
+            stroke-dasharray="364.4" stroke-dashoffset="364.4"
+            stroke="url(#ringGrad)"/>
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#6c63ff"/>
+              <stop offset="100%" stop-color="#34d399"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="ring-text">
+          <div class="ring-score" id="ring-score">0</div>
+          <div class="ring-label">/ 100</div>
+        </div>
+      </div>
+      <div class="result-verdict" id="result-verdict">Great effort!</div>
+      <div class="result-verdict-sub" id="result-verdict-sub">Here's your detailed performance breakdown.</div>
+    </div>
+
+    <div class="chances-bar">
+      <div class="chances-label">
+        <h3>🎯 Interview Success Probability</h3>
+        <div class="chances-pct" id="chances-pct">0%</div>
+      </div>
+      <div class="big-bar-track">
+        <div class="big-bar-fill" id="big-bar-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="breakdown-grid" id="breakdown-grid">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="tips-section">
+      <h3>💡 Improvement Suggestions</h3>
+      <div id="tips-list"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-secondary" onclick="restartInterview()">🔄 Practice Again</button>
+      <button class="btn-secondary" onclick="goTo('page-setup')">⚙️ Change Settings</button>
+      <button class="btn-secondary primary-action" onclick="goTo('page-landing')">🏠 Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  role: '',
+  level: 'Fresher',
+  count: 5,
+  mode: 'text',
+  questions: [],
+  currentQ: 0,
+  answers: [],
+  feedbacks: [],
+  timerInterval: null,
+  timerSeconds: 120,
+  recognition: null,
+  isRecording: false
+};
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function goTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ============================================================
+   SETUP INTERACTIONS
+   ============================================================ */
+function selectChip(el, group) {
+  el.closest('.chip-group').querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectMode(mode, el) {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.mode = mode;
+}
+
+/* ============================================================
+   FALLBACK QUESTIONS (used if API fails or no key)
+   ============================================================ */
+const fallbackQuestions = {
+  "Software Developer": [
+    "Tell me about yourself and why you're interested in software development.",
+    "Explain the difference between object-oriented and functional programming.",
+    "How do you approach debugging a complex issue in production?",
+    "Describe a project you're most proud of. What was your contribution?",
+    "What is the time complexity of binary search and why?",
+    "How would you design a URL shortener like bit.ly?",
+    "Tell me about a time you had to learn a new technology quickly.",
+    "What is REST and how does it differ from GraphQL?"
+  ],
+  "Data Analyst": [
+    "Tell me about yourself and your interest in data analysis.",
+    "What is the difference between INNER JOIN and LEFT JOIN in SQL?",
+    "How would you handle missing data in a dataset?",
+    "Describe a time you derived a business insight from data.",
+    "What is the difference between mean, median, and mode?",
+    "How would you explain a complex data finding to a non-technical stakeholder?",
+    "What tools have you used for data visualization?",
+    "Walk me through your process when given a new dataset to analyze."
+  ],
+  "default": [
+    "Tell me about yourself.",
+    "Why are you interested in this role?",
+    "What are your greatest strengths?",
+    "Describe a challenge you overcame.",
+    "Where do you see yourself in 5 years?",
+    "What's your biggest weakness and how are you working on it?",
+    "Tell me about a time you worked in a team.",
+    "Why should we hire you over other candidates?"
+  ]
+};
+
+/* ============================================================
+   START INTERVIEW
+   ============================================================ */
+async function startInterview() {
+  state.role = document.getElementById('job-role').value;
+  state.level = document.querySelector('.chip-group .chip.selected')?.textContent.trim() || 'Fresher';
+  const countEl = document.querySelectorAll('.chip-group')[1].querySelector('.chip.selected');
+  const countText = countEl?.textContent || '5 Standard';
+  state.count = parseInt(countText) || 5;
+  state.answers = [];
+  state.feedbacks = [];
+  state.currentQ = 0;
+
+  // Get questions from fallback (replace with API call if you have a backend proxy)
+  const pool = fallbackQuestions[state.role] || fallbackQuestions['default'];
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  state.questions = shuffled.slice(0, state.count);
+
+  goTo('page-interview');
+  document.getElementById('role-badge').textContent = state.role;
+  document.getElementById('q-counter').textContent = `Q 1/${state.count}`;
+  document.getElementById('chat-window').innerHTML = '';
+
+  await delay(400);
+  showGreeting();
+}
+
+async function showGreeting() {
+  await addAIMessage('', true); // typing
+  await delay(1000);
+  removeTyping();
+  addAIMessage(`👋 Welcome! I'll be your interviewer today for the <strong>${state.role}</strong> position. I have ${state.count} questions for you. Take your time and answer clearly. Ready? Let's begin!`);
+  await delay(800);
+  showQuestion();
+}
+
+/* ============================================================
+   QUESTION FLOW
+   ============================================================ */
+function showQuestion() {
+  const q = state.questions[state.currentQ];
+  updateProgress();
+  document.getElementById('q-counter').textContent = `Q ${state.currentQ + 1}/${state.count}`;
+  document.getElementById('answer-input').value = '';
+  document.getElementById('submit-btn').disabled = false;
+
+  setTimeout(async () => {
+    addTypingIndicator();
+    await delay(1000);
+    removeTyping();
+    addAIMessage(`<div class="q-label">Question ${state.currentQ + 1} of ${state.count}</div>${q}`);
+    startTimer();
+    scrollChat();
+  }, 300);
+}
+
+function updateProgress() {
+  const pct = (state.currentQ / state.count) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+/* ============================================================
+   TIMER
+   ============================================================ */
+function startTimer() {
+  clearInterval(state.timerInterval);
+  state.timerSeconds = 120;
+  updateTimerDisplay();
+  state.timerInterval = setInterval(() => {
+    state.timerSeconds--;
+    updateTimerDisplay();
+    if (state.timerSeconds <= 0) {
+      clearInterval(state.timerInterval);
+      autoSubmit();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.timerSeconds / 60);
+  const s = state.timerSeconds % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+  el.className = 'timer' + (state.timerSeconds <= 20 ? ' warning' : '');
+}
+
+function autoSubmit() {
+  const answer = document.getElementById('answer-input').value.trim();
+  if (!answer) {
+    skipQuestion();
+  } else {
+    submitAnswer();
+  }
+}
+
+/* ============================================================
+   VOICE INPUT
+   ============================================================ */
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Voice input is not supported in your browser. Please use Chrome.');
+    return;
+  }
+
+  if (state.isRecording) {
+    state.recognition?.stop();
+    state.isRecording = false;
+    document.getElementById('voice-btn').classList.remove('recording');
+    document.getElementById('voice-label').textContent = 'Use Voice';
+    return;
+  }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  state.recognition = new SR();
+  state.recognition.continuous = true;
+  state.recognition.interimResults = true;
+  state.recognition.lang = 'en-US';
+
+  state.recognition.onresult = (event) => {
+    let final = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) final += event.results[i][0].transcript + ' ';
+    }
+    if (final) {
+      const ta = document.getElementById('answer-input');
+      ta.value += final;
+    }
+  };
+
+  state.recognition.onerror = () => {
+    state.isRecording = false;
+    document.getElementById('voice-btn').classList.remove('recording');
+    document.getElementById('voice-label').textContent = 'Use Voice';
+  };
+
+  state.recognition.start();
+  state.isRecording = true;
+  document.getElementById('voice-btn').classList.add('recording');
+  document.getElementById('voice-label').textContent = 'Recording... (tap to stop)';
+}
+
+/* ============================================================
+   SUBMIT ANSWER
+   ============================================================ */
+async function submitAnswer() {
+  const answer = document.getElementById('answer-input').value.trim();
+  if (!answer) { shakePlaceholder(); return; }
+
+  clearInterval(state.timerInterval);
+  if (state.isRecording) { state.recognition?.stop(); state.isRecording = false; }
+
+  document.getElementById('submit-btn').disabled = true;
+
+  // Show user bubble
+  addUserMessage(answer);
+  state.answers.push(answer);
+
+  await delay(400);
+
+  // Get AI feedback
+  showLoading('Analysing your answer...', 'Scoring relevance, clarity & depth');
+  const feedback = await getFeedback(state.questions[state.currentQ], answer, state.role);
+  hideLoading();
+  state.feedbacks.push(feedback);
+
+  // Show feedback in chat
+  addTypingIndicator();
+  await delay(800);
+  removeTyping();
+  showFeedbackCard(feedback);
+
+  await delay(600);
+
+  state.currentQ++;
+  if (state.currentQ >= state.count) {
+    await delay(500);
+    addAIMessage("🎉 That's all the questions! Let me calculate your final score...");
+    await delay(1500);
+    showResults();
+  } else {
+    await delay(500);
+    addAIMessage("Good answer! Let's move to the next question.");
+    await delay(600);
+    showQuestion();
+  }
+  scrollChat();
+}
+
+async function skipQuestion() {
+  clearInterval(state.timerInterval);
+  state.answers.push('');
+  state.feedbacks.push(getDefaultFeedback());
+  addAIMessage('No problem! Moving to the next question.');
+  state.currentQ++;
+  if (state.currentQ >= state.count) {
+    await delay(800);
+    showResults();
+  } else {
+    await delay(500);
+    showQuestion();
+  }
+}
+
+/* ============================================================
+   AI FEEDBACK via CLAUDE API
+   ============================================================ */
+async function getFeedback(question, answer, role) {
+  try {
+    const prompt = `You are an expert interview coach evaluating a candidate for a ${role} position.
+
+Question: "${question}"
+Candidate's Answer: "${answer}"
+
+Evaluate this answer and respond ONLY with valid JSON in this exact format:
+{
+  "score": <number 1-10>,
+  "relevance": <number 1-10>,
+  "clarity": <number 1-10>,
+  "depth": <number 1-10>,
+  "communication": <number 1-10>,
+  "strengths": "<1-2 sentences about what was good>",
+  "weaknesses": "<1-2 sentences about what was lacking>",
+  "missing": "<key points that should have been mentioned>",
+  "suggestion": "<specific actionable improvement tip>",
+  "idealAnswer": "<a concise 3-4 sentence ideal answer to this question>"
+}`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    const text = data.content[0].text;
+    const clean = text.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch (e) {
+    // Fallback scoring if API unavailable
+    return simulateFeedback(answer);
+  }
+}
+
+// Simulated feedback when API is unavailable
+function simulateFeedback(answer) {
+  const len = answer.length;
+  const base = Math.min(10, Math.max(3, Math.round(4 + (len / 60))));
+  return {
+    score: base,
+    relevance: Math.min(10, base + Math.round(Math.random()*2-1)),
+    clarity: Math.min(10, base + Math.round(Math.random()*2-1)),
+    depth: Math.min(10, Math.max(1, base - 1 + Math.round(Math.random()*2))),
+    communication: Math.min(10, base + Math.round(Math.random()*2-1)),
+    strengths: "You addressed the question directly and maintained a reasonable length.",
+    weaknesses: "The answer could benefit from more specific examples and structured delivery.",
+    missing: "Concrete examples, metrics, and use of frameworks like STAR method.",
+    suggestion: "Try using the STAR method (Situation, Task, Action, Result) to structure behavioral answers.",
+    idealAnswer: "A strong answer would open with context, describe specific actions taken with reasoning, and close with measurable outcomes or lessons learned."
+  };
+}
+
+function getDefaultFeedback() {
+  return { score: 0, relevance:0, clarity:0, depth:0, communication:0, strengths:'—', weaknesses:'Question skipped', missing:'Full answer', suggestion:'Attempt every question, even partially.', idealAnswer:'N/A' };
+}
+
+/* ============================================================
+   FEEDBACK CARD RENDER
+   ============================================================ */
+function showFeedbackCard(fb) {
+  const score = fb.score;
+  const cls = score >= 7 ? 'high' : score >= 4 ? 'mid' : 'low';
+  const color = score >= 7 ? '#34d399' : score >= 4 ? '#fbbf24' : '#f87171';
+
+  const barColor = (val) => {
+    if (val >= 7) return '#34d399';
+    if (val >= 4) return '#fbbf24';
+    return '#f87171';
+  };
+
+  const html = `
+    <div class="feedback-card">
+      <div class="feedback-header">
+        <div>
+          <div class="feedback-title">Answer Feedback</div>
+          <div class="feedback-sub">Score: ${score}/10 · ${score >= 7 ? 'Strong' : score >= 4 ? 'Moderate' : 'Needs work'}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="score-badge ${cls}">${score}</div>
+          <button class="toggle-detail-btn" onclick="toggleDetail(this)">View details ▾</button>
+        </div>
+      </div>
+
+      <div class="score-bars">
+        ${[['Relevance',fb.relevance],['Clarity',fb.clarity],['Depth',fb.depth],['Communication',fb.communication]].map(([label,val])=>`
+          <div class="score-bar-item">
+            <div class="score-bar-label"><span>${label}</span><span>${val}/10</span></div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:${val*10}%;background:${barColor(val)}"></div></div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="detail-section" data-detail>
+        <div class="feedback-sections">
+          <div class="feedback-section">
+            <div class="feedback-section-label green">✓ Strengths</div>
+            <p>${fb.strengths}</p>
+          </div>
+          <div class="feedback-section">
+            <div class="feedback-section-label yellow">△ Weaknesses</div>
+            <p>${fb.weaknesses}</p>
+          </div>
+          <div class="feedback-section">
+            <div class="feedback-section-label blue">→ Suggestion</div>
+            <p>${fb.suggestion}</p>
+          </div>
+        </div>
+        <div class="ideal-answer mt-2">
+          <div class="ideal-answer-label">✦ Ideal Answer</div>
+          <p>${fb.idealAnswer}</p>
+        </div>
+      </div>
+    </div>`;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg';
+  wrap.innerHTML = `<div class="avatar ai">🤖</div><div style="flex:1">${html}</div>`;
+  document.getElementById('chat-window').appendChild(wrap);
+  scrollChat();
+}
+
+function toggleDetail(btn) {
+  const detail = btn.closest('.feedback-card').querySelector('[data-detail]');
+  detail.classList.toggle('open');
+  btn.textContent = detail.classList.contains('open') ? 'Hide details ▴' : 'View details ▾';
+}
+
+/* ============================================================
+   CHAT HELPERS
+   ============================================================ */
+function addAIMessage(html, typing = false) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg' + (typing ? ' typing-indicator' : '');
+  div.id = typing ? 'typing-msg' : '';
+  if (typing) {
+    div.innerHTML = `<div class="avatar ai">🤖</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  } else {
+    div.innerHTML = `<div class="avatar ai">🤖</div><div class="bubble ai">${html}</div>`;
+  }
+  document.getElementById('chat-window').appendChild(div);
+  scrollChat();
+}
+
+function addTypingIndicator() { addAIMessage('', true); }
+function removeTyping() {
+  const el = document.getElementById('typing-msg');
+  if (el) el.remove();
+}
+
+function addUserMessage(text) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg user';
+  div.innerHTML = `<div class="avatar user-av">👤</div><div class="bubble user">${escHtml(text)}</div>`;
+  document.getElementById('chat-window').appendChild(div);
+  scrollChat();
+}
+
+function scrollChat() {
+  const cw = document.getElementById('chat-window');
+  cw.scrollTop = cw.scrollHeight;
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function shakePlaceholder() {
+  const ta = document.getElementById('answer-input');
+  ta.style.borderColor = 'var(--red)';
+  ta.placeholder = 'Please type your answer first!';
+  setTimeout(() => {
+    ta.style.borderColor = '';
+    ta.placeholder = 'Type your answer here... Be specific and use examples where possible.';
+  }, 2000);
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ============================================================
+   RESULTS PAGE
+   ============================================================ */
+function showResults() {
+  clearInterval(state.timerInterval);
+  goTo('page-result');
+
+  document.getElementById('result-role-badge').textContent = state.role;
+  document.getElementById('result-q-badge').textContent = `${state.count} Questions`;
+
+  const validFeedbacks = state.feedbacks.filter(f => f.score > 0);
+  const total = validFeedbacks.length;
+  const avg = total > 0
+    ? Math.round((validFeedbacks.reduce((s,f) => s + f.score, 0) / total) * 10)
+    : 0;
+
+  const avgRelevance = avg10(validFeedbacks, 'relevance');
+  const avgClarity = avg10(validFeedbacks, 'clarity');
+  const avgDepth = avg10(validFeedbacks, 'depth');
+  const avgComm = avg10(validFeedbacks, 'communication');
+
+  const chances = Math.min(95, Math.round(avg * 0.85 + 15));
+
+  // Animate ring
+  setTimeout(() => {
+    const circumference = 364.4;
+    const offset = circumference * (1 - avg / 100);
+    document.getElementById('ring-fill').style.strokeDashoffset = offset;
+    animateNumber('ring-score', 0, avg, 1500);
+    animateNumber('chances-pct', 0, chances, 1500, '%');
+    setTimeout(() => {
+      document.getElementById('big-bar-fill').style.width = chances + '%';
+    }, 100);
+  }, 300);
+
+  // Verdict
+  let verdict, sub;
+  if (avg >= 75) { verdict = 'Excellent Performance! 🏆'; sub = "You're well-prepared. Keep it up!"; }
+  else if (avg >= 55) { verdict = 'Good Effort! 👍'; sub = "A bit more practice and you'll nail it."; }
+  else if (avg >= 35) { verdict = 'Keep Practicing 💪'; sub = "Focus on structuring your answers better."; }
+  else { verdict = 'Keep Going! 🌱'; sub = "Every practice session builds your confidence."; }
+
+  document.getElementById('result-verdict').textContent = verdict;
+  document.getElementById('result-verdict-sub').textContent = sub;
+  document.getElementById('chances-pct').textContent = '0%';
+
+  // Breakdown grid
+  document.getElementById('breakdown-grid').innerHTML = [
+    ['Relevance', avgRelevance + '/10', '#6c63ff'],
+    ['Clarity', avgClarity + '/10', '#34d399'],
+    ['Depth', avgDepth + '/10', '#fbbf24'],
+    ['Communication', avgComm + '/10', '#a78bfa'],
+  ].map(([label, val, color]) => `
+    <div class="breakdown-card">
+      <div class="bc-label">${label}</div>
+      <div class="bc-value" style="color:${color}">${val}</div>
+    </div>
+  `).join('');
+
+  // Tips
+  const tips = generateTips(avg, avgRelevance, avgClarity, avgDepth, avgComm);
+  document.getElementById('tips-list').innerHTML = tips.map(t =>
+    `<div class="tip-item"><span class="tip-icon">${t.icon}</span><span>${t.text}</span></div>`
+  ).join('');
+}
+
+function avg10(arr, key) {
+  if (!arr.length) return 0;
+  return (arr.reduce((s,f) => s + (f[key]||0), 0) / arr.length).toFixed(1);
+}
+
+function generateTips(overall, rel, clar, depth, comm) {
+  const tips = [];
+  if (overall < 60) tips.push({ icon: '⭐', text: 'Use the STAR method (Situation, Task, Action, Result) for behavioral questions — it structures answers and impresses interviewers.' });
+  if (parseFloat(depth) < 6) tips.push({ icon: '🔍', text: 'Go deeper in your answers. Mention specific technologies, numbers, or outcomes rather than staying generic.' });
+  if (parseFloat(clar) < 6) tips.push({ icon: '🗣️', text: 'Practice speaking in short, clear sentences. Record yourself and listen back to catch filler words.' });
+  if (parseFloat(rel) < 6) tips.push({ icon: '🎯', text: 'Stay focused on what was asked. Pause before answering to make sure your response addresses the core question.' });
+  if (parseFloat(comm) < 6) tips.push({ icon: '💬', text: 'Work on your communication confidence — start each answer with a clear one-liner summary before expanding.' });
+  tips.push({ icon: '📚', text: 'Research the company and role deeply. Tailor 2-3 answers specifically to their product/mission for bonus points.' });
+  tips.push({ icon: '🔄', text: `Practice this ${state.role} mock interview 3-4 more times this week. Repetition builds natural, confident delivery.` });
+  return tips.slice(0, 5);
+}
+
+function animateNumber(id, from, to, duration, suffix = '') {
+  const el = document.getElementById(id);
+  const start = performance.now();
+  const update = (now) => {
+    const t = Math.min(1, (now - start) / duration);
+    const val = Math.round(from + (to - from) * easeOut(t));
+    el.textContent = val + suffix;
+    if (t < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+function easeOut(t) { return 1 - (1 - t) ** 3; }
+
+function restartInterview() {
+  state.answers = [];
+  state.feedbacks = [];
+  state.currentQ = 0;
+  startInterview();
+}
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+function showLoading(title, sub) {
+  document.getElementById('loading-title').textContent = title;
+  document.getElementById('loading-sub').textContent = sub;
+  document.getElementById('loading-overlay').classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loading-overlay').classList.remove('active');
+}
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
