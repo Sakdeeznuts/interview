@@ -3,223 +3,1219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PrepAI — Interview Simulator</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>PrepAI — Professional Interview Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--card:#1c1c25;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
-  --accent:#6c63ff;--accent2:#a78bfa;--accent-glow:rgba(108,99,255,0.25);
-  --green:#34d399;--yellow:#fbbf24;--red:#f87171;
-  --text:#f0f0f8;--text2:#9090a8;--text3:#5c5c72;
-  --radius:16px;--radius-sm:10px;
-  --font-display:'DM Serif Display',serif;--font:'DM Sans',sans-serif;
-  --t:all 0.25s cubic-bezier(0.4,0,0.2,1);
+  --bg:       #18303f;
+  --bg2:      #1e3a4c;
+  --bg3:      #244357;
+  --card:     #2a4d63;
+  --card2:    #355872;
+  --border:   rgba(247,248,240,0.07);
+  --border2:  rgba(247,248,240,0.12);
+  --border3:  rgba(247,248,240,0.20);
+  --em:       #9CD5FF;
+  --em2:      #7AAACE;
+  --em-glow:  rgba(156,213,255,0.18);
+  --gold:     #7AAACE;
+  --gold2:    #9CD5FF;
+  --blue:     #9CD5FF;
+  --red:      #ff8a7a;
+  --text:     #F7F8F0;
+  --text2:    rgba(247,248,240,0.58);
+  --text3:    rgba(247,248,240,0.28);
+  --radius:   14px;
+  --radius-sm:10px;
+  --radius-xs:7px;
+  --font-d:   'Instrument Serif', Georgia, serif;
+  --font:     'Outfit', system-ui, sans-serif;
+  --t:        all 0.22s cubic-bezier(0.4,0,0.2,1);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 20% -10%,rgba(108,99,255,.12) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(167,139,250,.08) 0%,transparent 60%);pointer-events:none;z-index:0}
-.page{display:none;min-height:100vh;position:relative;z-index:1}
-.page.active{display:flex;flex-direction:column}
 
-/* LANDING */
-#page-landing{align-items:center;justify-content:center;text-align:center;padding:2rem}
-.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:100px;padding:6px 16px;font-size:13px;color:var(--accent2);margin-bottom:2rem;animation:fu .6s ease both}
-.dot{width:6px;height:6px;background:var(--accent2);border-radius:50%;animation:pulse 2s ease infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-h1.title{font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);line-height:1.05;margin-bottom:1.5rem;animation:fu .6s .1s ease both}
-.grad{background:linear-gradient(135deg,#6c63ff,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.sub{font-size:1.2rem;color:var(--text2);max-width:480px;margin:0 auto 2.5rem;line-height:1.7;font-weight:300;animation:fu .6s .2s ease both}
-.btn-p{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;border:none;border-radius:100px;padding:16px 36px;font-size:1rem;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--t);box-shadow:0 0 40px var(--accent-glow);animation:fu .6s .3s ease both}
-.btn-p:hover{background:#7c73ff;transform:translateY(-2px);box-shadow:0 0 60px rgba(108,99,255,.4)}
-.feats{display:flex;gap:2rem;margin-top:4rem;flex-wrap:wrap;justify-content:center;animation:fu .6s .4s ease both}
-.feat{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:14px}
-@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* SETUP */
-#page-setup{padding:2rem;align-items:center;justify-content:center}
-.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem;max-width:560px;width:100%;animation:fu .4s ease both}
-.setup-card h2{font-family:var(--font-display);font-size:2rem;margin-bottom:.5rem}
-.setup-card>p{color:var(--text2);margin-bottom:1.5rem;font-size:.95rem}
-.fg{margin-bottom:1.5rem}
-.fg label{display:block;font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem}
-.fg select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 16px;color:var(--text);font-family:var(--font);font-size:.95rem;transition:var(--t);appearance:none}
-.fg select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-.sw{position:relative}.sw::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
-.chips{display:flex;gap:10px;flex-wrap:wrap}
-.chip{padding:8px 20px;border-radius:100px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:14px;cursor:pointer;transition:var(--t);font-family:var(--font)}
-.chip:hover{border-color:var(--accent);color:var(--text)}
-.chip.sel{background:var(--accent);border-color:var(--accent);color:#fff}
-.mc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mcard{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:1rem;cursor:pointer;transition:var(--t);text-align:center}
-.mcard:hover{border-color:var(--accent)}
-.mcard.sel{border-color:var(--accent);background:rgba(108,99,255,.1)}
-.mcard .mi{font-size:28px;margin-bottom:6px}
-.mcard .mt{font-weight:600;font-size:14px;margin-bottom:3px}
-.mcard .md{font-size:12px;color:var(--text2)}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
 
-/* HEADER */
-.header{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;border-bottom:1px solid var(--border);background:rgba(10,10,15,.8);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100}
-.logo{font-family:var(--font-display);font-size:1.4rem}
-.logo span{color:var(--accent2)}
-.hinfo{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
-.ibadge{background:var(--bg3);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-size:13px;color:var(--text2)}
-.timer{display:flex;align-items:center;gap:6px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:100px;padding:6px 14px;font-size:14px;font-weight:600;color:var(--yellow);font-variant-numeric:tabular-nums}
-.timer.warn{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--red);animation:tp .8s ease infinite}
-@keyframes tp{0%,100%{opacity:1}50%{opacity:.6}}
-.pbwrap{width:100%;height:3px;background:var(--bg3)}
-.pbfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease}
+/* === MESH BACKGROUND === */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 10% 5%, rgba(156,213,255,.09) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 80%, rgba(53,88,114,.35) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 60% 50%, rgba(122,170,206,.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-/* INTERVIEW */
-#page-interview{flex-direction:column}
-.ibody{flex:1;display:flex;flex-direction:column;max-width:800px;width:100%;margin:0 auto;padding:2rem;gap:1.5rem}
-.cw{flex:1;display:flex;flex-direction:column;gap:1rem;min-height:200px}
-.msg{display:flex;gap:12px;animation:fu .3s ease both}
-.msg.user{flex-direction:row-reverse}
-.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.av.ai{background:linear-gradient(135deg,var(--accent),var(--accent2))}
-.av.u{background:var(--bg3);border:1px solid var(--border2)}
-.bbl{max-width:70%;padding:14px 18px;border-radius:18px;line-height:1.6;font-size:.95rem}
-.bbl.ai{background:var(--card);border:1px solid var(--border);border-top-left-radius:4px}
-.bbl.user{background:var(--accent);border-top-right-radius:4px;color:#fff}
-.qlabel{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-bottom:6px}
-.typing{display:flex;gap:12px;animation:fu .3s ease both}
-.tdots{background:var(--card);border:1px solid var(--border);border-radius:18px;border-top-left-radius:4px;padding:14px 18px;display:flex;gap:5px;align-items:center}
-.tdots span{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:td 1.2s ease infinite}
-.tdots span:nth-child(2){animation-delay:.2s}.tdots span:nth-child(3){animation-delay:.4s}
-@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
-.asec{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
-.asec textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:14px;color:var(--text);font-family:var(--font);font-size:.95rem;resize:none;min-height:110px;transition:var(--t);line-height:1.6}
-.asec textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-.asec textarea::placeholder{color:var(--text3)}
-.aact{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.btn-v{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:100px;padding:10px 18px;color:var(--text2);font-family:var(--font);font-size:14px;cursor:pointer;transition:var(--t);user-select:none}
-.btn-v:hover{border-color:var(--accent);color:var(--accent2)}
-.btn-v.rec{background:rgba(248,113,113,.15);border-color:var(--red);color:var(--red)}
-.btn-v.rec .vrec-dot{display:inline-block;width:8px;height:8px;background:var(--red);border-radius:50%;animation:rp 1s ease infinite;margin-right:2px}
-@keyframes rp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.vrec-dot{display:none}
-.btn-sub{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:100px;padding:10px 24px;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:var(--t)}
-.btn-sub:hover{background:#7c73ff;transform:translateY(-1px)}
-.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.btn-sk{background:none;border:1px solid var(--border2);border-radius:100px;padding:10px 18px;color:var(--text2);font-size:13px;cursor:pointer;font-family:var(--font);transition:var(--t)}
-.btn-sk:hover{border-color:var(--text2);color:var(--text)}
-.interim-text{font-size:12px;color:var(--text3);margin-top:6px;min-height:18px;font-style:italic;padding-left:4px;transition:color .2s}
-.interim-text.active{color:var(--accent2)}
+.page { display: none; min-height: 100vh; position: relative; z-index: 1; flex-direction: column; }
+.page.active { display: flex; }
 
-/* FEEDBACK */
-.fcard{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:1.5rem;animation:fu .4s ease both}
-.fhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.sbadge{display:flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;font-size:1.3rem;font-weight:700;border:3px solid}
-.sbadge.hi{border-color:var(--green);color:var(--green)}
-.sbadge.md{border-color:var(--yellow);color:var(--yellow)}
-.sbadge.lo{border-color:var(--red);color:var(--red)}
-.ftit{font-weight:600;font-size:1.05rem;margin-bottom:4px}
-.fsub{font-size:13px;color:var(--text2)}
-.tdbtn{background:none;border:1px solid var(--border2);border-radius:100px;padding:6px 14px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font);transition:var(--t)}
-.tdbtn:hover{border-color:var(--accent2);color:var(--accent2)}
-.sbars{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1rem 0}
-.slbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px}
-.strack{height:6px;background:var(--bg2);border-radius:100px;overflow:hidden}
-.sfill{height:100%;border-radius:100px;transition:width .8s cubic-bezier(.4,0,.2,1)}
-.fsecs{display:flex;flex-direction:column;gap:10px;margin-top:1rem}
-.fslbl{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.fslbl.g{color:var(--green)}.fslbl.y{color:var(--yellow)}.fslbl.b{color:var(--accent2)}
-.fsec p{font-size:13px;color:var(--text2);line-height:1.6}
-.ideal{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.2);border-radius:var(--radius-sm);padding:12px 14px;margin-top:1rem}
-.ilbl{font-size:12px;font-weight:600;color:var(--accent2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.ideal p{font-size:13px;color:var(--text2);line-height:1.6}
-.detsec{display:none}.detsec.open{display:block}
-.aistatus{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--green);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:100px;padding:4px 12px;margin-bottom:1rem}
+/* ========== GLOBAL NAV ========== */
+.gnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  height: 64px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(24,48,63,0.92);
+  backdrop-filter: blur(24px);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  flex-shrink: 0;
+}
 
-/* LOADING */
-.lov{position:fixed;inset:0;background:rgba(10,10,15,.85);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:1.5rem;opacity:0;pointer-events:none;transition:opacity .3s ease}
-.lov.on{opacity:1;pointer-events:all}
-.spin{width:52px;height:52px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-.ltxt{color:var(--text2);font-size:14px;text-align:center}
-.ltxt strong{color:var(--text);display:block;font-size:1.1rem;margin-bottom:4px}
+.logo-wrap { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #355872, #9CD5FF);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  box-shadow: 0 0 20px rgba(156,213,255,.2);
+}
+.logo-txt {
+  font-family: var(--font-d);
+  font-size: 1.35rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.logo-txt span { color: var(--em); }
 
-/* RESULT */
-#page-result{flex-direction:column}
-.rbody{flex:1;max-width:800px;width:100%;margin:0 auto;padding:2rem;display:flex;flex-direction:column;gap:1.5rem}
-.rhero{text-align:center;padding:2.5rem;background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
-.ring-wrap{width:140px;height:140px;margin:0 auto 1.5rem;position:relative}
-.ring-wrap svg{transform:rotate(-90deg)}
-.rtrack{fill:none;stroke:var(--bg3);stroke-width:12}
-.rfill{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1)}
-.rtext{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.rscore{font-size:2.2rem;font-weight:700}
-.rlbl{font-size:12px;color:var(--text2)}
-.rverdict{font-family:var(--font-display);font-size:1.8rem;margin-bottom:.5rem}
-.rvsub{color:var(--text2);font-size:.95rem}
-.cbar{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
-.clbl{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
-.clbl h3{font-weight:600}.cpct{font-size:1.4rem;font-weight:700;color:var(--green)}
-.btrack{height:12px;background:var(--bg2);border-radius:100px;overflow:hidden}
-.bfill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width 1.5s cubic-bezier(.4,0,.2,1)}
-.bgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.bcard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.2rem}
-.bclbl{font-size:13px;color:var(--text2);margin-bottom:6px}
-.bcval{font-size:1.6rem;font-weight:700}
-.tsec{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem}
-.tsec h3{font-weight:600;margin-bottom:1rem}
-.tip{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text2);line-height:1.5}
-.tip:last-child{border-bottom:none}
-.ract{display:flex;gap:12px;flex-wrap:wrap}
-.btn-s{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:100px;padding:14px 24px;font-family:var(--font);font-size:15px;font-weight:500;color:var(--text);cursor:pointer;transition:var(--t)}
-.btn-s:hover{border-color:var(--accent);color:var(--accent2)}
-.btn-s.pa{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn-s.pa:hover{background:#7c73ff}
-@media(max-width:600px){
-  .sbars,.bgrid,.mc{grid-template-columns:1fr}
-  .header,.ibody,.rbody{padding:1rem}
-  .setup-card{padding:1.5rem}
-  .bbl{max-width:85%}
-  .aact{flex-direction:column}
-  .btn-sub,.btn-sk{width:100%;justify-content:center}
+.nav-links { display: flex; align-items: center; gap: 2rem; }
+.nav-link { color: var(--text2); font-size: 14px; font-weight: 500; cursor: pointer; transition: var(--t); text-decoration: none; }
+.nav-link:hover { color: var(--text); }
+.nav-link.active-link { color: var(--em); }
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-badge {
+  background: rgba(156,213,255,.12);
+  border: 1px solid rgba(156,213,255,.25);
+  color: var(--em);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.btn-nav {
+  background: var(--em);
+  color: #18303f;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--t);
+}
+.btn-nav:hover { background: #b8e0ff; transform: translateY(-1px); }
+
+/* ========== LANDING ========== */
+#page-landing { align-items: stretch; }
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(156,213,255,.1);
+  border: 1px solid rgba(156,213,255,.22);
+  border-radius: 100px;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--em);
+  margin-bottom: 2.5rem;
+  animation: fadeUp .5s ease both;
+}
+
+.pulse-dot {
+  width: 7px; height: 7px;
+  background: var(--em);
+  border-radius: 50%;
+  animation: pulseAnim 2s ease infinite;
+  flex-shrink: 0;
+}
+@keyframes pulseAnim { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+h1.hero-title {
+  font-family: var(--font-d);
+  font-size: clamp(3.2rem, 8vw, 6.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.75rem;
+  animation: fadeUp .5s .08s ease both;
+  max-width: 900px;
+}
+
+.title-plain { color: var(--text); display: block; }
+.title-em {
+  display: block;
+  background: linear-gradient(110deg, #355872 0%, #7AAACE 35%, #9CD5FF 65%, #F7F8F0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  color: var(--text2);
+  max-width: 520px;
+  font-weight: 400;
+  margin-bottom: 3rem;
+  animation: fadeUp .5s .16s ease both;
+}
+
+.hero-ctas {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 5rem;
+  animation: fadeUp .5s .24s ease both;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: #9CD5FF;
+  color: #18303f;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--t);
+  box-shadow: 0 4px 32px rgba(156,213,255,.25), 0 1px 0 rgba(255,255,255,.1) inset;
+}
+.btn-primary:hover {
+  background: #b8e0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(156,213,255,.35);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--card2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--t);
+}
+.btn-secondary:hover { border-color: var(--border3); background: var(--card); transform: translateY(-1px); }
+
+/* Feature stats row */
+.stats-row {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp .5s .32s ease both;
+  margin-bottom: 5rem;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+  font-family: var(--font-d);
+  font-style: italic;
+}
+.stat-lbl { font-size: 13px; color: var(--text2); margin-top: 2px; }
+.stat-div { width: 1px; height: 40px; background: var(--border2); }
+
+/* Feature cards grid */
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  animation: fadeUp .5s .4s ease both;
+  background: var(--border);
+}
+.feat-card {
+  background: var(--card);
+  padding: 2rem;
+  transition: var(--t);
+}
+.feat-card:hover { background: var(--card2); }
+.feat-icon { font-size: 24px; margin-bottom: 1rem; }
+.feat-ttl { font-weight: 600; font-size: 15px; margin-bottom: .5rem; }
+.feat-dsc { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+/* Ticker strip */
+.ticker-strip {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(30,58,76,0.6);
+  padding: 12px 0;
+  overflow: hidden;
+  display: flex;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ticker-inner {
+  display: flex;
+  gap: 3rem;
+  animation: ticker 20s linear infinite;
+  padding-left: 2rem;
+}
+.ticker-inner span { font-size: 13px; color: rgba(247,248,240,0.4); display: flex; align-items: center; gap: 6px; }
+.ticker-inner span::before { content: '✦'; color: var(--em); font-size: 9px; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+
+/* Footer strip */
+.landing-footer {
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 3rem;
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+.footer-links { display: flex; gap: 2rem; }
+.footer-link { font-size: 13px; color: var(--text3); cursor: pointer; transition: var(--t); }
+.footer-link:hover { color: var(--text2); }
+.footer-copy { font-size: 13px; color: var(--text3); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========== SETUP ========== */
+#page-setup { align-items: stretch; }
+.setup-body {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.setup-main {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 520px;
+  animation: fadeUp .4s ease both;
+}
+.setup-main h2 {
+  font-family: var(--font-d);
+  font-size: 2rem;
+  margin-bottom: .4rem;
+  letter-spacing: -.01em;
+}
+.setup-main > .setup-sub { font-size: .9rem; color: var(--text2); margin-bottom: 2rem; }
+
+.setup-sidebar {
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: fadeUp .4s .08s ease both;
+}
+.sside-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.sside-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text3);
+  margin-bottom: 1rem;
+}
+.sside-tip {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: .75rem;
+  line-height: 1.5;
+}
+.sside-tip:last-child { margin-bottom: 0; }
+.sside-tip-icon { flex-shrink: 0; margin-top: 1px; }
+
+/* Form elements */
+.fg { margin-bottom: 1.75rem; }
+.fg label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  margin-bottom: .75rem;
+}
+.sw-wrap { position: relative; }
+.sw-wrap select {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 12px 40px 12px 14px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .95rem;
+  transition: var(--t);
+  appearance: none;
+  cursor: pointer;
+}
+.sw-wrap select:focus { outline: none; border-color: var(--em); box-shadow: 0 0 0 3px var(--em-glow); }
+.sw-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  pointer-events: none;
+  font-size: 12px;
+}
+
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--t);
+  font-family: var(--font);
+}
+.chip:hover { border-color: var(--em); color: var(--text); }
+.chip.sel { background: rgba(0,217,165,.12); border-color: var(--em); color: var(--em); }
+
+/* Mode cards */
+.mode-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.mcard {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 1.1rem;
+  cursor: pointer;
+  transition: var(--t);
+  position: relative;
+}
+.mcard:hover { border-color: var(--em); }
+.mcard.sel { border-color: var(--em); background: rgba(156,213,255,.08); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 1.75rem 0; }
+
+.btn-full {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #9CD5FF;
+  color: #18303f;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--t);
+  box-shadow: 0 4px 24px rgba(156,213,255,.2);
+}
+.btn-full:hover { background: #b8e0ff; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(156,213,255,.3); }
+
+/* ========== INTERVIEW ========== */
+#page-interview { align-items: stretch; flex-direction: column; }
+
+.int-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .9rem 2rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,12,18,.9);
+  backdrop-filter: blur(24px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+.int-header-left { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+.role-pill {
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.role-pill::before { content: ''; width: 7px; height: 7px; background: var(--em); border-radius: 50%; flex-shrink: 0; }
+
+.q-pill {
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(240,180,41,.1);
+  border: 1px solid rgba(240,180,41,.25);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+}
+.timer.warn {
+  background: rgba(255,107,107,.1);
+  border-color: rgba(255,107,107,.3);
+  color: var(--red);
+  animation: timerPulse .8s ease infinite;
+}
+@keyframes timerPulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+.pb-track { height: 2px; background: var(--bg3); flex-shrink: 0; }
+.pb-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #355872, #7AAACE, #9CD5FF);
+  transition: width .5s ease;
+}
+
+/* Interview layout */
+.int-body {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* Side panel */
+.int-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 120px;
+}
+
+.cam-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.cam-preview {
+  background: #0a0f15;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.cam-off-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text3);
+  font-size: 13px;
+}
+.cam-off-state span { font-size: 28px; }
+.cam-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,217,165,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,217,165,.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.cam-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: rgba(0,217,165,.3);
+  border-style: solid;
+}
+.cam-corner.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+.cam-corner.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+.cam-corner.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+.cam-corner.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+.cam-controls {
+  padding: .75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cam-lbl { font-size: 12px; color: var(--text3); font-weight: 500; }
+.cam-btn {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: var(--text2);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: var(--t);
+}
+.cam-btn:hover { border-color: var(--em); color: var(--em); }
+
+/* Metrics panel */
+.metrics-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+.metrics-ttl {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text3);
+  margin-bottom: .85rem;
+}
+.metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.metric-row:last-child { margin-bottom: 0; }
+.metric-lbl { font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 5px; }
+.metric-val {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.metric-val.good { background: rgba(0,217,165,.12); color: var(--em); }
+.metric-val.warn-m { background: rgba(240,180,41,.12); color: var(--gold); }
+.metric-val.off { background: var(--bg3); color: var(--text3); }
+.metric-bar-track { flex: 1; height: 4px; background: var(--bg3); border-radius: 100px; margin: 0 10px; overflow: hidden; }
+.metric-bar-fill { height: 100%; border-radius: 100px; transition: width 1.5s ease; }
+
+/* Main chat area */
+.int-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1.25rem; }
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 300px;
+}
+
+/* Messages */
+.msg { display: flex; gap: 12px; animation: fadeUp .3s ease both; }
+.msg.user { flex-direction: row-reverse; }
+
+.av {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.av.ai { background: linear-gradient(135deg, rgba(0,217,165,.25), rgba(74,158,255,.25)); border: 1px solid rgba(0,217,165,.2); }
+.av.u { background: var(--bg3); border: 1px solid var(--border2); }
+
+.bbl {
+  max-width: 72%;
+  padding: 13px 17px;
+  border-radius: 14px;
+  line-height: 1.65;
+  font-size: .9rem;
+}
+.bbl.ai { background: var(--card); border: 1px solid var(--border); border-top-left-radius: 4px; }
+.bbl.user { background: linear-gradient(135deg, #00b38a, #008a6b); border-top-right-radius: 4px; color: #fff; font-size: .875rem; }
+
+.qlabel { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--em); margin-bottom: 6px; }
+
+/* Typing */
+.typing { display: flex; gap: 12px; animation: fadeUp .3s ease both; }
+.tdots {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  border-top-left-radius: 4px;
+  padding: 13px 17px;
+  display: flex; gap: 5px; align-items: center;
+}
+.tdots span {
+  width: 6px; height: 6px;
+  background: var(--text3);
+  border-radius: 50%;
+  animation: tdAnim 1.2s ease infinite;
+}
+.tdots span:nth-child(2) { animation-delay: .2s; }
+.tdots span:nth-child(3) { animation-delay: .4s; }
+@keyframes tdAnim { 0%,60%,100%{transform:translateY(0);opacity:.3} 30%{transform:translateY(-5px);opacity:1} }
+
+/* Answer section */
+.ans-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.ans-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .9rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);
+}
+.ans-header-lbl { font-size: 12px; font-weight: 600; color: var(--text2); display: flex; align-items: center; gap: 7px; }
+.wc-badge { font-size: 11px; color: var(--text3); }
+.ans-body { padding: 1rem 1.25rem; }
+
+.ans-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .9rem;
+  resize: none;
+  min-height: 100px;
+  line-height: 1.65;
+  outline: none;
+}
+.ans-textarea::placeholder { color: var(--text3); }
+
+.interim-text {
+  font-size: 12px;
+  color: var(--text3);
+  min-height: 16px;
+  font-style: italic;
+  margin-top: 4px;
+  transition: color .2s;
+}
+.interim-text.active { color: var(--em); }
+
+.ans-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem 1.25rem;
+  border-top: 1px solid var(--border);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ans-actions-left { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--t);
+  user-select: none;
+}
+.btn-icon:hover { border-color: var(--em); color: var(--em); }
+.btn-icon.rec { background: rgba(255,107,107,.12); border-color: var(--red); color: var(--red); }
+.vrec-dot { display: none; width: 7px; height: 7px; background: var(--red); border-radius: 50%; animation: recPulse 1s ease infinite; }
+@keyframes recPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.6)} }
+
+.btn-skip {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--text3);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: var(--t);
+}
+.btn-skip:hover { color: var(--text2); border-color: var(--border2); }
+
+.btn-submit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #9CD5FF;
+  color: #18303f;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: var(--t);
+}
+.btn-submit:hover { background: #b8e0ff; transform: translateY(-1px); }
+.btn-submit:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+/* ========== FEEDBACK CARD ========== */
+.fcard {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: fadeUp .35s ease both;
+}
+.fcard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.fcard-left { display: flex; align-items: center; gap: 12px; }
+.score-ring {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2.5px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.score-ring.hi { border-color: var(--em); color: var(--em); }
+.score-ring.md { border-color: var(--gold); color: var(--gold); }
+.score-ring.lo { border-color: var(--red); color: var(--red); }
+.fcard-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.fcard-sub { font-size: 12px; color: var(--text2); }
+.detail-btn {
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 7px;
+  padding: 5px 12px;
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: var(--t);
+}
+.detail-btn:hover { border-color: var(--em); color: var(--em); }
+
+.fcard-bars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 1.1rem 1.25rem;
+}
+.bar-item {}
+.bar-lbl { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 5px; font-weight: 500; }
+.bar-track { height: 5px; background: var(--bg2); border-radius: 100px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 100px; transition: width .9s cubic-bezier(.4,0,.2,1); }
+
+.fcard-detail { display: none; border-top: 1px solid var(--border); }
+.fcard-detail.open { display: block; }
+.detail-inner { padding: 1.1rem 1.25rem; display: flex; flex-direction: column; gap: 10px; }
+.detail-section {}
+.detail-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  margin-bottom: 5px;
+}
+.detail-label.g { color: var(--em); }
+.detail-label.y { color: var(--gold); }
+.detail-label.b { color: var(--blue); }
+.detail-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.ideal-box {
+  background: rgba(74,158,255,.06);
+  border: 1px solid rgba(74,158,255,.15);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.1rem;
+  margin-top: 2px;
+}
+.ideal-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--blue); margin-bottom: 5px; }
+.ideal-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* AI status badge */
+.ai-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--em);
+  background: rgba(0,217,165,.07);
+  border: 1px solid rgba(0,217,165,.18);
+  border-radius: 100px;
+  padding: 4px 12px;
+  margin-bottom: .75rem;
+}
+
+/* ========== LOADING OVERLAY ========== */
+.load-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,12,18,.88);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  gap: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.load-overlay.on { opacity: 1; pointer-events: all; }
+.load-spinner {
+  width: 48px; height: 48px;
+  border: 2.5px solid var(--border2);
+  border-top-color: var(--em);
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.load-txt { text-align: center; }
+.load-ttl { font-size: 1.05rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.load-sub { font-size: 13px; color: var(--text2); }
+
+/* ========== RESULT PAGE ========== */
+#page-result { align-items: stretch; flex-direction: column; }
+.result-body {
+  flex: 1;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.result-hero {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.result-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(0,217,165,.07), transparent 70%);
+  pointer-events: none;
+}
+
+.ring-wrap { width: 140px; height: 140px; margin: 0 auto 2rem; position: relative; }
+.ring-wrap svg { transform: rotate(-90deg); }
+.rtrack { fill: none; stroke: var(--bg3); stroke-width: 10; }
+.rfill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.6s cubic-bezier(.4,0,.2,1); }
+.rtext { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.r-score-num { font-size: 2.4rem; font-weight: 800; color: var(--text); }
+.r-score-lbl { font-size: 11px; color: var(--text2); font-weight: 500; }
+
+.result-verdict { font-family: var(--font-d); font-size: 2rem; margin-bottom: .5rem; letter-spacing: -.01em; }
+.result-vsub { color: var(--text2); font-size: .95rem; }
+
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.rstat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem;
+}
+.rstat-lbl { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+.rstat-val { font-size: 1.6rem; font-weight: 800; }
+
+.probability-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.prob-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.prob-ttl { font-weight: 600; font-size: 15px; }
+.prob-pct { font-size: 1.5rem; font-weight: 800; color: var(--em); }
+.prob-track { height: 10px; background: var(--bg3); border-radius: 100px; overflow: hidden; margin-bottom: .75rem; }
+.prob-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #355872, #7AAACE, #9CD5FF); transition: width 1.5s cubic-bezier(.4,0,.2,1); }
+.prob-sub { font-size: 12px; color: var(--text2); }
+
+.tips-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+.tips-card h3 { font-weight: 600; font-size: 15px; margin-bottom: 1.25rem; }
+.tip-row { display: flex; gap: 12px; padding: .9rem 0; border-bottom: 1px solid var(--border); font-size: 13.5px; color: var(--text2); line-height: 1.55; align-items: flex-start; }
+.tip-row:last-child { border-bottom: none; }
+.tip-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+
+.result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-result {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 13px 20px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: var(--t);
+}
+.btn-result:hover { border-color: var(--em); color: var(--em); }
+.btn-result.primary-r { background: #9CD5FF; border-color: #9CD5FF; color: #18303f; font-weight: 700; }
+.btn-result.primary-r:hover { background: #b8e0ff; color: #18303f; }
+
+@media (max-width: 900px) {
+  .int-sidebar { display: none; }
+  .result-stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .hero-title { font-size: 2.6rem; }
+  .feat-grid { grid-template-columns: 1fr; }
+  .mode-grid { grid-template-columns: 1fr 1fr; }
+  .int-body { padding: 1rem; }
+  .bbl { max-width: 85%; }
+  .ans-footer { flex-direction: column; align-items: stretch; }
+  .btn-submit { justify-content: center; }
+  .result-stats { grid-template-columns: repeat(2, 1fr); }
+  .gnav .nav-links { display: none; }
+  .setup-body { flex-direction: column; align-items: center; }
+  .setup-sidebar { max-width: 520px; }
+  .landing-footer { flex-direction: column; gap: 1rem; text-align: center; }
+  .hero-section { padding: 3rem 1.5rem; }
+  .stats-row { gap: 1.5rem; }
 }
 </style>
 </head>
 <body>
 
-<div class="lov" id="lov">
-  <div class="spin"></div>
-  <div class="ltxt">
-    <strong id="ltit">Claude is evaluating your answer...</strong>
-    <span id="lsub">Analysing relevance, clarity, depth &amp; communication</span>
+<!-- LOAD OVERLAY -->
+<div class="load-overlay" id="lov">
+  <div class="load-spinner"></div>
+  <div class="load-txt">
+    <div class="load-ttl" id="ltit">Claude is evaluating your answer…</div>
+    <div class="load-sub" id="lsub">Analysing relevance, clarity, depth &amp; communication</div>
   </div>
 </div>
 
-<!-- LANDING -->
+<!-- =================== LANDING =================== -->
 <div class="page active" id="page-landing">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:2rem">
-    <div class="badge"><span class="dot"></span> Real Claude AI Feedback</div>
-    <h1 class="title">Ace Your Next<br><span class="grad">Interview</span></h1>
-    <p class="sub">Practice with an AI interviewer that actually understands your answers — not just counts your words.</p>
-    <button class="btn-p" onclick="goTo('page-setup')">
-      Start Practicing
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div class="feats">
-      <div class="feat">🎯 Role-specific questions</div>
-      <div class="feat">🤖 Real Claude AI scoring</div>
-      <div class="feat">🎙️ Voice input</div>
-      <div class="feat">📊 Deep feedback</div>
+  <nav class="gnav">
+    <div class="logo-wrap">
+      <div class="logo-icon">🎯</div>
+      <div class="logo-txt">Prep<span>AI</span></div>
+    </div>
+    <div class="nav-links">
+      <span class="nav-link active-link">Product</span>
+      <span class="nav-link">How it works</span>
+      <span class="nav-link">Roles</span>
+      <span class="nav-link">Pricing</span>
+    </div>
+    <div class="nav-right">
+      <div class="nav-badge">✦ Powered by Claude AI</div>
+      <button class="btn-nav" onclick="goTo('page-setup')">Start Free →</button>
+    </div>
+  </nav>
+
+  <div class="ticker-strip">
+    <div class="ticker-inner" id="ticker1">
+      <span>Software Developer</span><span>Frontend Developer</span><span>Data Scientist</span>
+      <span>Product Manager</span><span>UI/UX Designer</span><span>DevOps Engineer</span>
+      <span>HR Manager</span><span>Business Analyst</span><span>Marketing Analyst</span>
+      <span>Data Analyst</span><span>Software Developer</span><span>Frontend Developer</span>
+      <span>Data Scientist</span><span>Product Manager</span><span>UI/UX Designer</span>
+      <span>DevOps Engineer</span><span>HR Manager</span><span>Business Analyst</span>
     </div>
   </div>
+
+  <div class="hero-section">
+    <div class="hero-eyebrow"><span class="pulse-dot"></span> Real Claude AI · Live Feedback · No Signup</div>
+    <h1 class="hero-title">
+      <span class="title-plain">Land your next role.</span>
+      <span class="title-em">Practice smarter.</span>
+    </h1>
+    <p class="hero-sub">An AI interviewer that understands your answers, not just counts your words. Role-specific questions, instant intelligent scoring, and actionable feedback.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="goTo('page-setup')">
+        Start Practicing Free
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="btn-secondary">Watch Demo ▶</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-item"><span class="stat-num">10+</span><div class="stat-lbl">Job roles covered</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">4</span><div class="stat-lbl">Scoring dimensions</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">AI</span><div class="stat-lbl">Real Claude feedback</div></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-num">Free</span><div class="stat-lbl">No credit card</div></div>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🎯</div>
+        <div class="feat-ttl">Role-Specific Questions</div>
+        <div class="feat-dsc">Claude generates tailored questions for your exact role and experience level — not generic HR prompts.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🤖</div>
+        <div class="feat-ttl">Intelligent Scoring</div>
+        <div class="feat-dsc">Scored on relevance, clarity, depth, and communication — the same dimensions real interviewers judge.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎙️</div>
+        <div class="feat-ttl">Voice Input</div>
+        <div class="feat-dsc">Practice speaking your answers naturally. Real-time voice transcription with interim word display.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-ttl">Deep Feedback</div>
+        <div class="feat-dsc">Strengths, weaknesses, what's missing, and a model ideal answer for every question you answer.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⏱️</div>
+        <div class="feat-ttl">Timed Sessions</div>
+        <div class="feat-dsc">2-minute per-question timer simulates real interview time pressure and trains concise communication.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📈</div>
+        <div class="feat-ttl">Success Probability</div>
+        <div class="feat-dsc">See your estimated interview success probability and a personalised improvement roadmap after each session.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-footer">
+    <div class="logo-wrap">
+      <div class="logo-icon">🎯</div>
+      <div class="logo-txt">Prep<span>AI</span></div>
+    </div>
+    <div class="footer-links">
+      <span class="footer-link">Privacy</span>
+      <span class="footer-link">Terms</span>
+      <span class="footer-link">Contact</span>
+      <span class="footer-link">Blog</span>
+    </div>
+    <div class="footer-copy">© 2025 PrepAI. Built with Claude AI.</div>
+  </div>
 </div>
 
-<!-- SETUP -->
+<!-- =================== SETUP =================== -->
 <div class="page" id="page-setup">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:2rem">
-    <div class="setup-card">
-      <h2>Set Up Your Interview</h2>
-      <p>Choose your role, level and number of questions to begin.</p>
+  <nav class="gnav">
+    <div class="logo-wrap">
+      <div class="logo-icon">🎯</div>
+      <div class="logo-txt">Prep<span>AI</span></div>
+    </div>
+    <div class="nav-links"></div>
+    <div class="nav-right">
+      <button class="btn-icon" onclick="goTo('page-landing')" style="font-size:13px">← Back</button>
+    </div>
+  </nav>
+
+  <div class="setup-body">
+    <div class="setup-main">
+      <h2>Configure Your Interview</h2>
+      <p class="setup-sub">Tailor the session to your role, level, and preferences.</p>
 
       <div class="fg">
         <label>Job Role</label>
-        <div class="sw"><select id="jobrole">
+        <div class="sw-wrap"><select id="jobrole">
           <option>Software Developer</option>
           <option>Frontend Developer</option>
           <option>Data Analyst</option>
@@ -239,6 +1235,7 @@ h1.title{font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);line-hei
           <button class="chip sel" onclick="selChip(this,'lchips')">👶 Fresher</button>
           <button class="chip" onclick="selChip(this,'lchips')">🎓 Student</button>
           <button class="chip" onclick="selChip(this,'lchips')">🚀 1–2 Years</button>
+          <button class="chip" onclick="selChip(this,'lchips')">💼 3–5 Years</button>
         </div>
       </div>
 
@@ -251,103 +1248,221 @@ h1.title{font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);line-hei
         </div>
       </div>
 
-      <div class="fg">
+      <hr class="divider">
+      <div class="fg" style="margin-bottom:0">
         <label>Input Mode</label>
-        <div class="mc">
+        <div class="mode-grid">
           <div class="mcard sel" onclick="selMode('text',this)">
-            <div class="mi">⌨️</div><div class="mt">Text Input</div><div class="md">Type your answers</div>
+            <div class="mi">⌨️</div>
+            <div class="mt">Text Input</div>
+            <div class="md">Type your answers at your own pace</div>
           </div>
           <div class="mcard" onclick="selMode('voice',this)">
-            <div class="mi">🎙️</div><div class="mt">Voice Input</div><div class="md">Speak your answers</div>
+            <div class="mi">🎙️</div>
+            <div class="mt">Voice Input</div>
+            <div class="md">Speak naturally, answers transcribed live</div>
+          </div>
+          <div class="mcard" onclick="selMode('webcam',this)">
+            <div class="mi">📷</div>
+            <div class="mt">Webcam Session</div>
+            <div class="md">Eye contact & posture analysis</div>
+          </div>
+          <div class="mcard" onclick="selMode('panel',this)">
+            <div class="mi">🧠</div>
+            <div class="mt">AI Panel Interview</div>
+            <div class="md">Face 3 AI interviewers at once</div>
           </div>
         </div>
       </div>
 
-      <button class="btn-p" style="width:100%;justify-content:center;margin-top:.5rem" onclick="startInterview()">
-        Begin Interview →
+      <hr class="divider">
+      <button class="btn-full" onclick="startInterview()">
+        Begin Interview Session →
       </button>
     </div>
-  </div>
-</div>
 
-<!-- INTERVIEW -->
-<div class="page" id="page-interview">
-  <div class="header">
-    <div class="logo">Prep<span>AI</span></div>
-    <div class="hinfo">
-      <div class="ibadge" id="rbadge"></div>
-      <div class="ibadge" id="qctr">Q 1/5</div>
-      <div class="timer" id="timer">⏱ 2:00</div>
-    </div>
-  </div>
-  <div class="pbwrap"><div class="pbfill" id="pbfill" style="width:0%"></div></div>
-  <div class="ibody">
-    <div class="cw" id="cw"></div>
-    <div class="asec">
-      <textarea id="ainput" placeholder="Type your answer here... Use specific examples and the STAR method for behavioral questions."></textarea>
-      <div class="interim-text" id="interim-text"></div>
-      <div class="aact">
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn-v" id="vbtn" onclick="toggleVoice()">
-            <span class="vrec-dot" id="vrec-dot"></span>
-            <span id="vicon">🎙️</span>
-            <span id="vlbl">Use Voice</span>
-          </button>
-          <button class="btn-sk" onclick="skipQ()">Skip →</button>
-        </div>
-        <button class="btn-sub" id="subbtn" onclick="submitAns()">
-          Submit Answer
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+    <div class="setup-sidebar">
+      <div class="sside-card">
+        <div class="sside-title">💡 Pro Tips</div>
+        <div class="sside-tip"><span class="sside-tip-icon">🌟</span> Use the STAR method: Situation → Task → Action → Result for behavioral questions.</div>
+        <div class="sside-tip"><span class="sside-tip-icon">📏</span> Aim for 60–120 words per answer. Concise but complete wins.</div>
+        <div class="sside-tip"><span class="sside-tip-icon">🔢</span> Include numbers and metrics wherever possible — they make answers memorable.</div>
+        <div class="sside-tip"><span class="sside-tip-icon">🎯</span> Stay on topic. Relevance is the first thing scored.</div>
+      </div>
+      <div class="sside-card">
+        <div class="sside-title">🚀 Coming Soon</div>
+        <div class="sside-tip"><span class="sside-tip-icon">📷</span> Webcam eye-contact & posture scoring</div>
+        <div class="sside-tip"><span class="sside-tip-icon">🎭</span> AI panel interview with multiple personas</div>
+        <div class="sside-tip"><span class="sside-tip-icon">📄</span> Resume-based custom questions</div>
+        <div class="sside-tip"><span class="sside-tip-icon">📊</span> Progress tracking over time</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- RESULT -->
-<div class="page" id="page-result">
-  <div class="header">
-    <div class="logo">Prep<span>AI</span></div>
-    <div class="hinfo"><div class="ibadge" id="rrbadge"></div><div class="ibadge" id="rqbadge"></div></div>
+<!-- =================== INTERVIEW =================== -->
+<div class="page" id="page-interview">
+  <div class="int-header">
+    <div class="int-header-left">
+      <div class="logo-wrap" style="gap:8px">
+        <div class="logo-icon" style="width:26px;height:26px;font-size:12px">🎯</div>
+        <div class="logo-txt" style="font-size:1.1rem">Prep<span>AI</span></div>
+      </div>
+      <div class="role-pill" id="rbadge">Software Developer</div>
+      <div class="q-pill" id="qctr">Q 1 / 5</div>
+    </div>
+    <div class="timer" id="timer">⏱ 2:00</div>
   </div>
-  <div class="rbody">
-    <div class="rhero">
+  <div class="pb-track"><div class="pb-fill" id="pbfill" style="width:0%"></div></div>
+
+  <div class="int-body">
+    <!-- Sidebar -->
+    <div class="int-sidebar">
+      <div class="cam-panel">
+        <div class="cam-preview">
+          <div class="cam-grid"></div>
+          <div class="cam-corner tl"></div>
+          <div class="cam-corner tr"></div>
+          <div class="cam-corner bl"></div>
+          <div class="cam-corner br"></div>
+          <div class="cam-off-state">
+            <span>📷</span>
+            <div>Camera off</div>
+          </div>
+        </div>
+        <div class="cam-controls">
+          <div class="cam-lbl">You (candidate)</div>
+          <button class="cam-btn">Enable</button>
+        </div>
+      </div>
+
+      <div class="metrics-panel">
+        <div class="metrics-ttl">Live Analytics</div>
+        <div class="metric-row">
+          <div class="metric-lbl">👁 Eye Contact</div>
+          <div class="metric-val off">—</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-lbl">🔊 Noise Level</div>
+          <div class="metric-val off">—</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-lbl">💬 Word Pace</div>
+          <div class="metric-val warn-m" id="wpace">— wpm</div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-lbl">📊 Confidence</div>
+          <div class="metric-val off">—</div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);line-height:1.5">
+          Enable webcam for full live analytics · Coming soon
+        </div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="int-main">
+      <div class="chat-window" id="cw"></div>
+      <div class="ans-section">
+        <div class="ans-header">
+          <div class="ans-header-lbl">
+            ✍️ Your Answer
+          </div>
+          <div class="wc-badge" id="wc-badge">0 words</div>
+        </div>
+        <div class="ans-body">
+          <textarea
+            class="ans-textarea"
+            id="ainput"
+            placeholder="Type your answer here… Use specific examples and the STAR method for behavioural questions."
+          ></textarea>
+          <div class="interim-text" id="interim-text"></div>
+        </div>
+        <div class="ans-footer">
+          <div class="ans-actions-left">
+            <button class="btn-icon" id="vbtn" onclick="toggleVoice()">
+              <span class="vrec-dot" id="vrec-dot"></span>
+              <span id="vicon">🎙️</span>
+              <span id="vlbl">Voice Input</span>
+            </button>
+            <button class="btn-skip" onclick="skipQ()">Skip →</button>
+          </div>
+          <button class="btn-submit" id="subbtn" onclick="submitAns()">
+            Submit Answer
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3 3.5-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== RESULT =================== -->
+<div class="page" id="page-result">
+  <nav class="gnav">
+    <div class="logo-wrap">
+      <div class="logo-icon">🎯</div>
+      <div class="logo-txt">Prep<span>AI</span></div>
+    </div>
+    <div class="nav-right">
+      <div class="q-pill" id="rqbadge"></div>
+      <div class="role-pill" id="rrbadge"></div>
+    </div>
+  </nav>
+
+  <div class="result-body">
+    <div class="result-hero">
       <div class="ring-wrap">
         <svg width="140" height="140" viewBox="0 0 140 140">
           <circle class="rtrack" cx="70" cy="70" r="58"/>
-          <circle class="rfill" id="rfill" cx="70" cy="70" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4" stroke="url(#rg)"/>
-          <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stop-color="#6c63ff"/><stop offset="100%" stop-color="#34d399"/>
-          </linearGradient></defs>
+          <circle class="rfill" id="rfill" cx="70" cy="70" r="58"
+            stroke-dasharray="364.4" stroke-dashoffset="364.4" stroke="url(#rg)"/>
+          <defs>
+            <linearGradient id="rg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#355872"/>
+              <stop offset="50%" stop-color="#7AAACE"/>
+              <stop offset="100%" stop-color="#9CD5FF"/>
+            </linearGradient>
+          </defs>
         </svg>
-        <div class="rtext"><div class="rscore" id="rscore">0</div><div class="rlbl">/ 100</div></div>
+        <div class="rtext">
+          <div class="r-score-num" id="rscore">0</div>
+          <div class="r-score-lbl">/ 100</div>
+        </div>
       </div>
-      <div class="rverdict" id="rverdict"></div>
-      <div class="rvsub" id="rvsub"></div>
+      <div class="result-verdict" id="rverdict"></div>
+      <div class="result-vsub" id="rvsub"></div>
     </div>
-    <div class="cbar">
-      <div class="clbl"><h3>🎯 Interview Success Probability</h3><div class="cpct" id="cpct">0%</div></div>
-      <div class="btrack"><div class="bfill" id="bfill" style="width:0%"></div></div>
+
+    <div class="result-stats" id="result-stats"></div>
+
+    <div class="probability-card">
+      <div class="prob-header">
+        <div class="prob-ttl">🎯 Interview Success Probability</div>
+        <div class="prob-pct" id="cpct">0%</div>
+      </div>
+      <div class="prob-track"><div class="prob-fill" id="bfill" style="width:0%"></div></div>
+      <div class="prob-sub" id="prob-sub">Based on your overall performance across all questions.</div>
     </div>
-    <div class="bgrid" id="bgrid"></div>
-    <div class="tsec"><h3>💡 Improvement Suggestions</h3><div id="tlist"></div></div>
-    <div class="ract">
-      <button class="btn-s" onclick="startInterview()">🔄 Practice Again</button>
-      <button class="btn-s" onclick="goTo('page-setup')">⚙️ Settings</button>
-      <button class="btn-s pa" onclick="goTo('page-landing')">🏠 Home</button>
+
+    <div class="tips-card">
+      <h3>💡 Personalised Improvement Plan</h3>
+      <div id="tlist"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-result" onclick="startInterview()">🔄 Practice Again</button>
+      <button class="btn-result" onclick="goTo('page-setup')">⚙️ Change Settings</button>
+      <button class="btn-result primary-r" onclick="goTo('page-landing')">🏠 Home</button>
     </div>
   </div>
 </div>
 
 <script>
-// ============================================================
-// HARDCODED API KEY
-// ============================================================
+// ── API KEY ──
 const API_KEY = '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';
 
-// ============================================================
-// STATE
-// ============================================================
+// ── STATE ──
 const S = {
   role:'', level:'Fresher', count:5, mode:'text',
   questions:[], cur:0, answers:[], feedbacks:[],
@@ -355,137 +1470,50 @@ const S = {
   recog:null, isRec:false, interimFinal:''
 };
 
-// ============================================================
-// QUESTION BANK (fallback only — used if Claude API fails)
-// ============================================================
+// ── QUESTION BANK FALLBACK ──
 const QB = {
-  "Software Developer":[
-    "Walk me through a project you built recently. What was your specific role and what did you learn?",
-    "Explain the difference between a stack and a queue with a real-world use case for each.",
-    "How do you approach debugging a bug that only appears sometimes and is hard to reproduce?",
-    "What is the difference between synchronous and asynchronous programming? Give an example.",
-    "Describe how you would design a simple URL shortener system like bit.ly.",
-    "What does REST mean and how does a REST API differ from GraphQL?",
-    "Tell me about a time you had to optimise slow-performing code. What did you do?",
-    "How do you make sure your code is readable and maintainable for other developers?"
-  ],
-  "Frontend Developer":[
-    "Explain the difference between CSS Flexbox and Grid — when would you use each?",
-    "What is the virtual DOM in React and why does it improve performance?",
-    "How do you approach making a website accessible to users with disabilities?",
-    "Walk me through a UI component you built that you're particularly proud of.",
-    "What are Core Web Vitals and why do they matter for user experience?",
-    "How do you handle state management in a large React application?",
-    "Tell me about a time you significantly improved a website's performance.",
-    "How does the browser render a webpage? Describe the process step by step."
-  ],
-  "Data Analyst":[
-    "Tell me about a time you found a surprising insight in data. Walk me through your process.",
-    "What is the difference between an INNER JOIN and a LEFT JOIN in SQL? Give an example.",
-    "How do you handle missing or null values when analysing a dataset?",
-    "Explain the difference between correlation and causation with a clear example.",
-    "How would you explain a complex data finding to a non-technical manager?",
-    "What metrics would you track to measure the health of an e-commerce platform?",
-    "Walk me through your process when you receive a brand new dataset to explore.",
-    "When would you use a bar chart vs a histogram? What's the difference?"
-  ],
-  "Data Scientist":[
-    "Explain overfitting — how would you detect it and what would you do to prevent it?",
-    "What is the difference between precision and recall? When would you prioritise one over the other?",
-    "Walk me through a machine learning project you've worked on from start to finish.",
-    "How would you handle a heavily imbalanced dataset in a classification problem?",
-    "What is cross-validation and why is it important in model evaluation?",
-    "Explain the bias-variance tradeoff in simple terms a non-ML person could understand.",
-    "How do you decide which model to use for a given problem?",
-    "Tell me about a time a model you built failed or underperformed. What did you do?"
-  ],
-  "Product Manager":[
-    "How would you prioritise features when engineering bandwidth is limited?",
-    "Tell me about a product decision you made that turned out to be wrong. What did you learn?",
-    "How do you define and measure success for a new feature launch?",
-    "Walk me through how you would design an onboarding experience for a new app.",
-    "How do you handle disagreements between engineering and design teams?",
-    "Tell me about a product you use daily and one meaningful thing you would improve about it.",
-    "How do you gather user feedback and translate it into your roadmap?",
-    "What is the difference between output metrics and outcome metrics?"
-  ],
-  "UI/UX Designer":[
-    "Walk me through your design process from brief to final deliverable.",
-    "How do you conduct user research when you have limited time and budget?",
-    "Tell me about a time user feedback completely changed your design direction.",
-    "How do you balance business goals with user needs when they conflict?",
-    "What is the difference between UX and UI? Give examples of each.",
-    "How do you ensure your designs are accessible to all users?",
-    "Describe a design decision you made based on data rather than intuition.",
-    "How do you handle feedback or criticism of your designs from stakeholders?"
-  ],
-  "HR Manager":[
-    "How do you handle a situation where two employees have a serious conflict?",
-    "Walk me through your process for onboarding a new employee effectively.",
-    "How do you identify and retain top talent in a competitive market?",
-    "Tell me about a time you had to deliver difficult feedback to an employee.",
-    "How do you ensure diversity and inclusion in the hiring process?",
-    "What metrics do you use to measure the effectiveness of HR initiatives?",
-    "How do you handle a situation where a manager is underperforming?",
-    "Describe your approach to building a strong company culture."
-  ],
-  "Marketing Analyst":[
-    "Walk me through how you would measure the ROI of a marketing campaign.",
-    "What metrics would you track for a new product launch?",
-    "How do you approach A/B testing for a landing page?",
-    "Tell me about a time data changed your marketing strategy completely.",
-    "What is the difference between CAC and LTV, and why do they matter?",
-    "How would you segment a customer base for a targeted email campaign?",
-    "Describe a campaign that underperformed and what you learned from it.",
-    "How do you stay updated with changes in digital marketing platforms?"
-  ],
-  "Business Analyst":[
-    "Walk me through your process for gathering and documenting requirements.",
-    "How do you handle conflicting requirements from different stakeholders?",
-    "Tell me about a time your analysis directly influenced a business decision.",
-    "How do you prioritise requirements when everything seems equally important?",
-    "What tools do you use for process mapping and business analysis?",
-    "Describe a situation where you had to present complex findings simply.",
-    "How do you validate that a solution has actually solved the original problem?",
-    "Tell me about a project that went off-track and how you helped recover it."
-  ],
-  "DevOps Engineer":[
-    "Explain the difference between continuous integration and continuous deployment.",
-    "How would you approach reducing deployment time from hours to minutes?",
-    "Tell me about an incident you handled. How did you diagnose and resolve it?",
-    "What is the difference between Docker and a virtual machine?",
-    "How do you monitor application health in production?",
-    "Walk me through how you would set up a CI/CD pipeline from scratch.",
-    "How do you handle secrets and sensitive configuration in your infrastructure?",
-    "Tell me about a time you improved system reliability or uptime significantly."
-  ]
+  "Software Developer":["Walk me through a project you built recently. What was your specific role and what did you learn?","Explain the difference between a stack and a queue with a real-world use case for each.","How do you approach debugging a bug that only appears sometimes and is hard to reproduce?","What is the difference between synchronous and asynchronous programming? Give an example.","Describe how you would design a simple URL shortener system like bit.ly.","What does REST mean and how does a REST API differ from GraphQL?","Tell me about a time you had to optimise slow-performing code. What did you do?","How do you make sure your code is readable and maintainable for other developers?"],
+  "Frontend Developer":["Explain the difference between CSS Flexbox and Grid — when would you use each?","What is the virtual DOM in React and why does it improve performance?","How do you approach making a website accessible to users with disabilities?","Walk me through a UI component you built that you're particularly proud of.","What are Core Web Vitals and why do they matter for user experience?","How do you handle state management in a large React application?","Tell me about a time you significantly improved a website's performance.","How does the browser render a webpage? Describe the process step by step."],
+  "Data Analyst":["Tell me about a time you found a surprising insight in data. Walk me through your process.","What is the difference between an INNER JOIN and a LEFT JOIN in SQL? Give an example.","How do you handle missing or null values when analysing a dataset?","Explain the difference between correlation and causation with a clear example.","How would you explain a complex data finding to a non-technical manager?","What metrics would you track to measure the health of an e-commerce platform?","Walk me through your process when you receive a brand new dataset to explore.","When would you use a bar chart vs a histogram? What's the difference?"],
+  "Data Scientist":["Explain overfitting — how would you detect it and what would you do to prevent it?","What is the difference between precision and recall? When would you prioritise one over the other?","Walk me through a machine learning project you've worked on from start to finish.","How would you handle a heavily imbalanced dataset in a classification problem?","What is cross-validation and why is it important in model evaluation?","Explain the bias-variance tradeoff in simple terms a non-ML person could understand.","How do you decide which model to use for a given problem?","Tell me about a time a model you built failed or underperformed. What did you do?"],
+  "Product Manager":["How would you prioritise features when engineering bandwidth is limited?","Tell me about a product decision you made that turned out to be wrong. What did you learn?","How do you define and measure success for a new feature launch?","Walk me through how you would design an onboarding experience for a new app.","How do you handle disagreements between engineering and design teams?","Tell me about a product you use daily and one meaningful thing you would improve about it.","How do you gather user feedback and translate it into your roadmap?","What is the difference between output metrics and outcome metrics?"],
+  "UI/UX Designer":["Walk me through your design process from brief to final deliverable.","How do you conduct user research when you have limited time and budget?","Tell me about a time user feedback completely changed your design direction.","How do you balance business goals with user needs when they conflict?","What is the difference between UX and UI? Give examples of each.","How do you ensure your designs are accessible to all users?","Describe a design decision you made based on data rather than intuition.","How do you handle feedback or criticism of your designs from stakeholders?"],
+  "HR Manager":["How do you handle a situation where two employees have a serious conflict?","Walk me through your process for onboarding a new employee effectively.","How do you identify and retain top talent in a competitive market?","Tell me about a time you had to deliver difficult feedback to an employee.","How do you ensure diversity and inclusion in the hiring process?","What metrics do you use to measure the effectiveness of HR initiatives?","How do you handle a situation where a manager is underperforming?","Describe your approach to building a strong company culture."],
+  "Marketing Analyst":["Walk me through how you would measure the ROI of a marketing campaign.","What metrics would you track for a new product launch?","How do you approach A/B testing for a landing page?","Tell me about a time data changed your marketing strategy completely.","What is the difference between CAC and LTV, and why do they matter?","How would you segment a customer base for a targeted email campaign?","Describe a campaign that underperformed and what you learned from it.","How do you stay updated with changes in digital marketing platforms?"],
+  "Business Analyst":["Walk me through your process for gathering and documenting requirements.","How do you handle conflicting requirements from different stakeholders?","Tell me about a time your analysis directly influenced a business decision.","How do you prioritise requirements when everything seems equally important?","What tools do you use for process mapping and business analysis?","Describe a situation where you had to present complex findings simply.","How do you validate that a solution has actually solved the original problem?","Tell me about a project that went off-track and how you helped recover it."],
+  "DevOps Engineer":["Explain the difference between continuous integration and continuous deployment.","How would you approach reducing deployment time from hours to minutes?","Tell me about an incident you handled. How did you diagnose and resolve it?","What is the difference between Docker and a virtual machine?","How do you monitor application health in production?","Walk me through how you would set up a CI/CD pipeline from scratch.","How do you handle secrets and sensitive configuration in your infrastructure?","Tell me about a time you improved system reliability or uptime significantly."]
 };
 
-// ============================================================
-// NAVIGATION
-// ============================================================
-function goTo(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+// ── NAVIGATION ──
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
 
-// ============================================================
-// SETUP
-// ============================================================
-function selChip(el,gid){
-  document.getElementById(gid).querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+// ── SETUP HELPERS ──
+function selChip(el, gid) {
+  document.getElementById(gid).querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
 }
-function selMode(m,el){
-  document.querySelectorAll('.mcard').forEach(c=>c.classList.remove('sel'));
-  el.classList.add('sel'); S.mode=m;
+function selMode(m, el) {
+  document.querySelectorAll('.mode-grid .mcard').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel'); S.mode = m;
 }
 
-// ============================================================
-// AI QUESTION GENERATION  ← NEW
-// ============================================================
-async function generateQuestions(){
+// ── WORD COUNT ──
+document.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('ainput');
+  if (ta) {
+    ta.addEventListener('input', () => {
+      const wc = ta.value.trim() ? ta.value.trim().split(/\s+/).filter(Boolean).length : 0;
+      document.getElementById('wc-badge').textContent = wc + ' word' + (wc !== 1 ? 's' : '');
+    });
+  }
+});
+
+// ── AI QUESTION GENERATION ──
+async function generateQuestions() {
   const prompt = `Generate exactly ${S.count} interview questions for a ${S.level} candidate applying for ${S.role}.
 
 Rules:
@@ -500,105 +1528,90 @@ Return ONLY a JSON array of strings, no markdown, no numbering, no extra text:
 
   const raw = await callClaude(prompt, 600);
   const m = raw.replace(/```json|```/g,'').trim().match(/\[[\s\S]*\]/);
-  if(!m) throw new Error('No JSON array');
+  if (!m) throw new Error('No JSON array');
   const qs = JSON.parse(m[0]);
-  if(!Array.isArray(qs) || qs.length === 0) throw new Error('Empty array');
+  if (!Array.isArray(qs) || qs.length === 0) throw new Error('Empty array');
   return qs.slice(0, S.count);
 }
 
-// ============================================================
-// START
-// ============================================================
-async function startInterview(){
-  S.role = document.getElementById('jobrole').value;
-  S.level = document.querySelector('#lchips .chip.sel')?.textContent.trim()||'Fresher';
-  S.count = parseInt(document.querySelector('#qchips .chip.sel')?.textContent||'5')||5;
-  S.answers=[]; S.feedbacks=[]; S.cur=0; S.interimFinal='';
-  S.isRec=false; S.recog=null;
+// ── START INTERVIEW ──
+async function startInterview() {
+  S.role    = document.getElementById('jobrole').value;
+  S.level   = document.querySelector('#lchips .chip.sel')?.textContent.trim() || 'Fresher';
+  S.count   = parseInt(document.querySelector('#qchips .chip.sel')?.textContent || '5') || 5;
+  S.answers = []; S.feedbacks = []; S.cur = 0; S.interimFinal = '';
+  S.isRec   = false; S.recog = null;
 
-  // ── AI QUESTION GENERATION (with QB fallback) ──
-  showLoad(
-    `Generating ${S.count} tailored questions for ${S.role}...`,
-    'Claude is crafting your personalised interview'
-  );
+  showLoad(`Generating ${S.count} tailored questions for ${S.role}…`, 'Claude is crafting your personalised interview');
   try {
     S.questions = await generateQuestions();
   } catch(e) {
-    console.warn('Question generation failed, using question bank fallback:', e);
+    console.warn('Question generation failed, using fallback:', e);
     const pool = QB[S.role] || QB["Software Developer"];
-    S.questions = [...pool].sort(()=>Math.random()-.5).slice(0, S.count);
+    S.questions = [...pool].sort(() => Math.random() - .5).slice(0, S.count);
   }
   hideLoad();
-  // ── END AI QUESTION GENERATION ──
 
   goTo('page-interview');
   document.getElementById('rbadge').textContent = S.role;
-  document.getElementById('qctr').textContent = `Q 1/${S.count}`;
+  document.getElementById('qctr').textContent   = `Q 1 / ${S.count}`;
   document.getElementById('cw').innerHTML = '';
   document.getElementById('ainput').value = '';
+  document.getElementById('wc-badge').textContent = '0 words';
   await delay(400);
   showGreeting();
 }
 
-async function showGreeting(){
+async function showGreeting() {
   addTyping(); await delay(1000); rmTyping();
-  addAI(`<div class="aistatus">✦ Claude AI active — intelligent real-time feedback</div>👋 Welcome! I'll be your interviewer for the <strong>${S.role}</strong> role (${S.level}). I have ${S.count} questions prepared. Be specific, use real examples, and take your time. Let's begin!`);
-  await delay(600);
-  showQ();
+  addAI(`<div class="ai-status">✦ Claude AI · Intelligent real-time feedback</div>👋 Welcome to your <strong>${S.role}</strong> interview (${S.level} level). I have ${S.count} tailored questions for you. Be specific, use real examples, and take your time. Let's begin!`);
+  await delay(600); showQ();
 }
 
-// ============================================================
-// QUESTION FLOW
-// ============================================================
-function showQ(){
+// ── QUESTION FLOW ──
+function showQ() {
   const q = S.questions[S.cur];
-  document.getElementById('pbfill').style.width = (S.cur/S.count*100)+'%';
-  document.getElementById('qctr').textContent = `Q ${S.cur+1}/${S.count}`;
+  document.getElementById('pbfill').style.width = (S.cur / S.count * 100) + '%';
+  document.getElementById('qctr').textContent   = `Q ${S.cur + 1} / ${S.count}`;
   document.getElementById('ainput').value = '';
   document.getElementById('interim-text').textContent = '';
+  document.getElementById('wc-badge').textContent = '0 words';
   document.getElementById('subbtn').disabled = false;
   S.interimFinal = '';
 
-  setTimeout(async()=>{
+  setTimeout(async () => {
     addTyping(); await delay(900); rmTyping();
-    addAI(`<div class="qlabel">Question ${S.cur+1} of ${S.count}</div>${q}`);
+    addAI(`<div class="qlabel">Question ${S.cur + 1} of ${S.count}</div>${q}`);
     startTimer(); scrollBot();
   }, 300);
 }
 
-// ============================================================
-// TIMER
-// ============================================================
-function startTimer(){
-  clearInterval(S.timerInt); S.timerSec=120; renderTimer();
-  S.timerInt = setInterval(()=>{ S.timerSec--; renderTimer(); if(S.timerSec<=0){clearInterval(S.timerInt);autoSub();} }, 1000);
+// ── TIMER ──
+function startTimer() {
+  clearInterval(S.timerInt); S.timerSec = 120; renderTimer();
+  S.timerInt = setInterval(() => {
+    S.timerSec--;
+    renderTimer();
+    if (S.timerSec <= 0) { clearInterval(S.timerInt); autoSub(); }
+  }, 1000);
 }
-function renderTimer(){
-  const m=Math.floor(S.timerSec/60), s=S.timerSec%60;
-  const el=document.getElementById('timer');
-  el.textContent=`⏱ ${m}:${s.toString().padStart(2,'0')}`;
-  el.className='timer'+(S.timerSec<=20?' warn':'');
+function renderTimer() {
+  const m = Math.floor(S.timerSec / 60), s = S.timerSec % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `⏱ ${m}:${s.toString().padStart(2, '0')}`;
+  el.className = 'timer' + (S.timerSec <= 20 ? ' warn' : '');
 }
-function autoSub(){ document.getElementById('ainput').value.trim()?submitAns():skipQ(); }
+function autoSub() { document.getElementById('ainput').value.trim() ? submitAns() : skipQ(); }
 
-// ============================================================
-// VOICE INPUT
-// ============================================================
-function toggleVoice(){
+// ── VOICE ──
+function toggleVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){
-    addAI('⚠️ Voice input requires Chrome or Brave. Please type your answer instead.');
-    return;
-  }
-  if(S.isRec){
-    S.isRec = false;
-    S.recog?.stop();
-    return;
-  }
+  if (!SR) { addAI('⚠️ Voice input requires Chrome or Brave. Please type your answer instead.'); return; }
+  if (S.isRec) { S.isRec = false; S.recog?.stop(); return; }
   startRecognition();
 }
 
-function startRecognition(){
+function startRecognition() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   S.recog = new SR();
   S.recog.continuous = false;
@@ -612,81 +1625,60 @@ function startRecognition(){
     document.getElementById('vbtn').classList.add('rec');
     document.getElementById('vrec-dot').style.display = 'inline-block';
     document.getElementById('vicon').textContent = '⏹️';
-    document.getElementById('vlbl').textContent = 'Stop Recording';
-    document.getElementById('interim-text').textContent = '🎙 Listening...';
+    document.getElementById('vlbl').textContent = 'Stop';
+    document.getElementById('interim-text').textContent = '🎙 Listening…';
     document.getElementById('interim-text').classList.add('active');
   };
 
   S.recog.onresult = (e) => {
     let interim = '', final = '';
-    for(let i = e.resultIndex; i < e.results.length; i++){
+    for (let i = e.resultIndex; i < e.results.length; i++) {
       const t = e.results[i][0].transcript;
       e.results[i].isFinal ? (final += t + ' ') : (interim += t);
     }
-    if(final){
-      S.interimFinal += final;
-      document.getElementById('ainput').value = S.interimFinal;
-    }
-    document.getElementById('interim-text').textContent =
-      interim ? `🎙 "${interim}"` : '🎙 Listening...';
+    if (final) { S.interimFinal += final; document.getElementById('ainput').value = S.interimFinal; }
+    document.getElementById('interim-text').textContent = interim ? `🎙 "${interim}"` : '🎙 Listening…';
+    // Update word count
+    const wc = document.getElementById('ainput').value.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('wc-badge').textContent = wc + ' word' + (wc !== 1 ? 's' : '');
   };
 
   S.recog.onerror = (e) => {
-    const msgs = {
-      'not-allowed': '⚠️ Microphone access denied. Allow it in your browser settings.',
-      'no-speech':   null,
-      'network':     '⚠️ Network error with speech recognition.',
-      'aborted':     null
-    };
-    if(msgs[e.error]) addAI(msgs[e.error]);
-    if(e.error === 'not-allowed'){
-      stopVoiceUI();
-    } else if(S.isRec){
-      setTimeout(startRecognition, 200);
-    } else {
-      stopVoiceUI();
-    }
+    const msgs = { 'not-allowed': '⚠️ Microphone access denied. Allow it in browser settings.', 'network': '⚠️ Network error with speech recognition.' };
+    if (msgs[e.error]) addAI(msgs[e.error]);
+    if (e.error === 'not-allowed') { stopVoiceUI(); }
+    else if (S.isRec) { setTimeout(startRecognition, 200); }
+    else { stopVoiceUI(); }
   };
 
   S.recog.onend = () => {
-    if(S.isRec){
-      setTimeout(startRecognition, 100);
-    } else {
-      stopVoiceUI();
-    }
+    if (S.isRec) setTimeout(startRecognition, 100);
+    else stopVoiceUI();
   };
 
-  try{
-    S.recog.start();
-  } catch(e){
-    addAI('⚠️ Could not start voice input. Please type your answer instead.');
-    stopVoiceUI();
-  }
+  try { S.recog.start(); }
+  catch(e) { addAI('⚠️ Could not start voice input. Please type instead.'); stopVoiceUI(); }
 }
 
-function stopVoiceUI(){
+function stopVoiceUI() {
   S.isRec = false;
   document.getElementById('vbtn').classList.remove('rec');
   document.getElementById('vrec-dot').style.display = 'none';
   document.getElementById('vicon').textContent = '🎙️';
-  document.getElementById('vlbl').textContent = 'Use Voice';
+  document.getElementById('vlbl').textContent = 'Voice Input';
   document.getElementById('interim-text').textContent = '';
   document.getElementById('interim-text').classList.remove('active');
 }
 
-// ============================================================
-// SUBMIT
-// ============================================================
-async function submitAns(){
-  if(S.isRec){ S.isRec=false; S.recog?.stop(); stopVoiceUI(); await delay(300); }
-
+// ── SUBMIT ──
+async function submitAns() {
+  if (S.isRec) { S.isRec = false; S.recog?.stop(); stopVoiceUI(); await delay(300); }
   const ans = document.getElementById('ainput').value.trim();
-  if(!ans){
-    document.getElementById('ainput').style.borderColor='var(--red)';
-    setTimeout(()=>document.getElementById('ainput').style.borderColor='',2000);
+  if (!ans) {
+    document.getElementById('ainput').style.boxShadow = '0 0 0 2px var(--red)';
+    setTimeout(() => document.getElementById('ainput').style.boxShadow = '', 2000);
     return;
   }
-
   clearInterval(S.timerInt);
   document.getElementById('subbtn').disabled = true;
   document.getElementById('interim-text').textContent = '';
@@ -694,7 +1686,7 @@ async function submitAns(){
   addUser(ans);
   S.answers.push(ans);
 
-  showLoad('Claude is evaluating your answer...','Analysing relevance, clarity, depth & communication');
+  showLoad('Claude is evaluating your answer…', 'Analysing relevance, clarity, depth & communication');
   const fb = await getFeedback(S.questions[S.cur], ans);
   hideLoad();
   S.feedbacks.push(fb);
@@ -703,34 +1695,32 @@ async function submitAns(){
   renderFB(fb);
 
   S.cur++;
-  if(S.cur >= S.count){
+  if (S.cur >= S.count) {
     await delay(600);
-    addAI(`🎉 All ${S.count} questions done! Calculating your final score...`);
+    addAI(`🎉 All ${S.count} questions complete! Compiling your results now…`);
     await delay(1500);
     showResults();
   } else {
     await delay(500);
-    addAI('Good effort! Next question coming up.');
+    addAI('Good effort! Moving to the next question.');
     await delay(600);
     showQ();
   }
   scrollBot();
 }
 
-async function skipQ(){
-  if(S.isRec){ S.isRec=false; S.recog?.stop(); stopVoiceUI(); }
+async function skipQ() {
+  if (S.isRec) { S.isRec = false; S.recog?.stop(); stopVoiceUI(); }
   clearInterval(S.timerInt);
   S.answers.push(''); S.feedbacks.push(null);
-  addAI('Skipped. Moving on.');
+  addAI('Skipped. Moving on to the next question.');
   S.cur++;
-  if(S.cur>=S.count){ await delay(800); showResults(); }
-  else{ await delay(500); showQ(); }
+  if (S.cur >= S.count) { await delay(800); showResults(); }
+  else { await delay(500); showQ(); }
 }
 
-// ============================================================
-// CLAUDE API
-// ============================================================
-async function callClaude(prompt, maxTok=900){
+// ── CLAUDE API ──
+async function callClaude(prompt, maxTok = 900) {
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -742,29 +1732,27 @@ async function callClaude(prompt, maxTok=900){
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: maxTok,
-      messages: [{ role:'user', content: prompt }]
+      messages: [{ role: 'user', content: prompt }]
     })
   });
-  if(!r.ok) throw new Error(`API ${r.status}`);
+  if (!r.ok) throw new Error(`API ${r.status}`);
   const d = await r.json();
   return d.content[0].text;
 }
 
-// ============================================================
-// GET FEEDBACK
-// ============================================================
-async function getFeedback(q, ans){
-  try{ return await claudeFeedback(q, ans); }
-  catch(e){ console.warn('Claude error, using local', e); return localFeedback(q, ans); }
+// ── FEEDBACK ──
+async function getFeedback(q, ans) {
+  try { return await claudeFeedback(q, ans); }
+  catch(e) { console.warn('Claude error, using local:', e); return localFeedback(q, ans); }
 }
 
-async function claudeFeedback(q, ans){
+async function claudeFeedback(q, ans) {
   const prompt = `You are an expert interview coach. Evaluate this ${S.level} candidate applying for ${S.role}.
 
 QUESTION: "${q}"
 CANDIDATE ANSWER: "${ans}"
 
-Be a strict but fair evaluator:
+Be strict but fair:
 - Penalise vague answers with no examples, off-topic answers, answers under 15 words (score 1-3)
 - Reward STAR structure, specific examples, metrics/numbers, technical depth
 - Score 8-10 only for genuinely strong, well-structured, example-backed answers
@@ -774,163 +1762,197 @@ Return ONLY this JSON, no markdown:
 
   const raw = await callClaude(prompt, 900);
   const m = raw.replace(/```json|```/g,'').trim().match(/\{[\s\S]*\}/);
-  if(!m) throw new Error('No JSON');
+  if (!m) throw new Error('No JSON');
   return JSON.parse(m[0]);
 }
 
-function localFeedback(q, ans){
-  const a=ans.toLowerCase(), words=ans.trim().split(/\s+/).filter(Boolean), wc=words.length;
-  const has={
-    example:/for example|for instance|when i|i once|i worked|i built|i helped|i managed|at my|in my project|during|we had|one time/i.test(a),
-    structure:/first|second|also|additionally|however|therefore|star|situation|task|action|result/i.test(a),
-    numbers:/\d+%|\d+ year|\d+ month|\d+ user|\d+ team|reduced|increased|improved|decreased|doubled/i.test(a),
-    tech:/api|function|algorithm|database|framework|method|class|component|deploy|test|debug|code|git|sql|python|javascript|react|docker|cloud|ml|model/i.test(a)
+function localFeedback(q, ans) {
+  const a = ans.toLowerCase(), words = ans.trim().split(/\s+/).filter(Boolean), wc = words.length;
+  const has = {
+    example: /for example|for instance|when i|i once|i worked|i built|i helped|i managed|at my|in my project|during|we had|one time/i.test(a),
+    structure: /first|second|also|additionally|however|therefore|star|situation|task|action|result/i.test(a),
+    numbers: /\d+%|\d+ year|\d+ month|\d+ user|\d+ team|reduced|increased|improved|decreased|doubled/i.test(a),
+    tech: /api|function|algorithm|database|framework|method|class|component|deploy|test|debug|code|git|sql|python|javascript|react|docker|cloud|ml|model/i.test(a)
   };
-  let score=3;
-  if(wc>=25) score++; if(wc>=50) score++;
-  if(has.example) score+=2; if(has.structure) score++;
-  if(has.numbers) score++; if(has.tech) score++;
-  if(wc<12) score=Math.min(2,score);
-  else if(wc<25&&!has.example) score=Math.min(4,score);
-  score=Math.min(10,Math.max(1,score));
-  const bv=v=>Math.min(10,Math.max(1,v));
+  let score = 3;
+  if (wc >= 25) score++; if (wc >= 50) score++;
+  if (has.example) score += 2; if (has.structure) score++;
+  if (has.numbers) score++; if (has.tech) score++;
+  if (wc < 12) score = Math.min(2, score);
+  else if (wc < 25 && !has.example) score = Math.min(4, score);
+  score = Math.min(10, Math.max(1, score));
+  const bv = v => Math.min(10, Math.max(1, v));
   return {
-    score, relevance:bv(score+(has.example?1:-1)), clarity:bv(score+(has.structure?1:-1)),
-    depth:bv(score+(has.numbers||has.tech?1:-2)), communication:bv(score+(wc>60?1:0)),
-    strengths:[has.example&&'used a concrete example',has.structure&&'structured the response',has.numbers&&'included metrics',wc>=50&&'gave a detailed response'].filter(Boolean).join(', ')||'Attempted to answer.',
-    weaknesses:[!has.example&&'no real example given',!has.structure&&'no clear structure',wc<30&&'answer too short'].filter(Boolean).join(', ')||'Minor gaps.',
-    missing: !has.example?'A specific real-life example (use STAR method).':!has.numbers?'Quantified outcomes — numbers, percentages, timeframes.':'A closing reflection on what you learned.',
-    suggestion: wc<20?'Your answer is too brief. Aim for 60+ words with a real example.':!has.example?'Use STAR: Situation → Task → Action → Result. It instantly makes answers more credible.':'Add a number or metric to make your answer more memorable.',
-    idealAnswer:`A strong answer opens with a specific situation, describes concrete actions with reasoning, and closes with a measurable outcome — 3-4 focused sentences.`
+    score, relevance: bv(score + (has.example ? 1 : -1)), clarity: bv(score + (has.structure ? 1 : -1)),
+    depth: bv(score + (has.numbers || has.tech ? 1 : -2)), communication: bv(score + (wc > 60 ? 1 : 0)),
+    strengths: [has.example && 'Used a concrete example', has.structure && 'Structured response well', has.numbers && 'Included metrics', wc >= 50 && 'Gave a detailed response'].filter(Boolean).join(', ') || 'Attempted to answer.',
+    weaknesses: [!has.example && 'No real example given', !has.structure && 'No clear structure', wc < 30 && 'Answer too short'].filter(Boolean).join(', ') || 'Minor gaps.',
+    missing: !has.example ? 'A specific real-life example (use STAR method).' : !has.numbers ? 'Quantified outcomes — numbers, percentages, timeframes.' : 'A closing reflection on what you learned.',
+    suggestion: wc < 20 ? 'Your answer is too brief. Aim for 60+ words with a real example.' : !has.example ? 'Use STAR: Situation → Task → Action → Result.' : 'Add a number or metric to make your answer more memorable.',
+    idealAnswer: 'A strong answer opens with a specific situation, describes concrete actions with reasoning, and closes with a measurable outcome — 3–4 focused sentences.'
   };
 }
 
-// ============================================================
-// RENDER FEEDBACK CARD
-// ============================================================
-function renderFB(fb){
-  const s=fb.score, cls=s>=7?'hi':s>=4?'md':'lo';
-  const bc=v=>v>=7?'#34d399':v>=4?'#fbbf24':'#f87171';
-  const html=`
+// ── RENDER FEEDBACK ──
+function renderFB(fb) {
+  const s = fb.score, cls = s >= 7 ? 'hi' : s >= 4 ? 'md' : 'lo';
+  const bc = v => v >= 7 ? '#00d9a5' : v >= 4 ? '#f0b429' : '#ff6b6b';
+  const verdict = s >= 7 ? 'Strong answer' : s >= 4 ? 'Moderate answer' : 'Needs improvement';
+
+  const html = `
     <div class="fcard">
-      <div class="fhdr">
-        <div><div class="ftit">Answer Feedback</div><div class="fsub">Score: ${s}/10 · ${s>=7?'Strong':s>=4?'Moderate':'Needs work'}</div></div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div class="sbadge ${cls}">${s}</div>
-          <button class="tdbtn" onclick="togDet(this)">Details ▾</button>
+      <div class="fcard-header">
+        <div class="fcard-left">
+          <div class="score-ring ${cls}">${s}</div>
+          <div>
+            <div class="fcard-title">Feedback · ${verdict}</div>
+            <div class="fcard-sub">Score ${s}/10 · ${['Relevance','Clarity','Depth','Communication'].map((l,i)=>[fb.relevance,fb.clarity,fb.depth,fb.communication][i]+' '+l).join(' · ')}</div>
+          </div>
         </div>
+        <button class="detail-btn" onclick="togDet(this)">Details ▾</button>
       </div>
-      <div class="sbars">
-        ${[['Relevance',fb.relevance],['Clarity',fb.clarity],['Depth',fb.depth],['Communication',fb.communication]].map(([l,v])=>
-          `<div><div class="slbl"><span>${l}</span><span>${v}/10</span></div><div class="strack"><div class="sfill" style="width:${v*10}%;background:${bc(v)}"></div></div></div>`
-        ).join('')}
+      <div class="fcard-bars">
+        ${[['Relevance',fb.relevance],['Clarity',fb.clarity],['Depth',fb.depth],['Communication',fb.communication]].map(([l,v])=>`
+          <div class="bar-item">
+            <div class="bar-lbl"><span>${l}</span><span>${v}/10</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${v*10}%;background:${bc(v)}"></div></div>
+          </div>`).join('')}
       </div>
-      <div class="detsec" data-det>
-        <div class="fsecs">
-          <div class="fsec"><div class="fslbl g">✓ Strengths</div><p>${fb.strengths}</p></div>
-          <div class="fsec"><div class="fslbl y">△ Weaknesses</div><p>${fb.weaknesses}</p></div>
-          <div class="fsec"><div class="fslbl b">💡 What was missing</div><p>${fb.missing}</p></div>
-          <div class="fsec"><div class="fslbl b">→ Suggestion</div><p>${fb.suggestion}</p></div>
+      <div class="fcard-detail" data-det>
+        <div class="detail-inner">
+          <div class="detail-section">
+            <div class="detail-label g">✓ Strengths</div>
+            <div class="detail-text">${fb.strengths}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label y">△ Weaknesses</div>
+            <div class="detail-text">${fb.weaknesses}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label b">💡 What was missing</div>
+            <div class="detail-text">${fb.missing}</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label b">→ Actionable suggestion</div>
+            <div class="detail-text">${fb.suggestion}</div>
+          </div>
+          <div class="ideal-box">
+            <div class="ideal-label">✦ Ideal Answer</div>
+            <div class="ideal-text">${fb.idealAnswer}</div>
+          </div>
         </div>
-        <div class="ideal"><div class="ilbl">✦ Ideal Answer</div><p>${fb.idealAnswer}</p></div>
       </div>
     </div>`;
-  const w=document.createElement('div'); w.className='msg';
-  w.innerHTML=`<div class="av ai">🤖</div><div style="flex:1">${html}</div>`;
-  document.getElementById('cw').appendChild(w); scrollBot();
+
+  const w = document.createElement('div');
+  w.className = 'msg';
+  w.innerHTML = `<div class="av ai">🤖</div><div style="flex:1">${html}</div>`;
+  document.getElementById('cw').appendChild(w);
+  scrollBot();
 }
 
-function togDet(btn){
-  const d=btn.closest('.fcard').querySelector('[data-det]');
+function togDet(btn) {
+  const d = btn.closest('.fcard').querySelector('[data-det]');
   d.classList.toggle('open');
-  btn.textContent=d.classList.contains('open')?'Hide ▴':'Details ▾';
+  btn.textContent = d.classList.contains('open') ? 'Hide ▴' : 'Details ▾';
 }
 
-// ============================================================
-// CHAT HELPERS
-// ============================================================
-function addAI(html){
-  const d=document.createElement('div'); d.className='msg';
-  d.innerHTML=`<div class="av ai">🤖</div><div class="bbl ai">${html}</div>`;
+// ── CHAT HELPERS ──
+function addAI(html) {
+  const d = document.createElement('div'); d.className = 'msg';
+  d.innerHTML = `<div class="av ai">🤖</div><div class="bbl ai">${html}</div>`;
   document.getElementById('cw').appendChild(d); scrollBot();
 }
-function addTyping(){
-  const d=document.createElement('div'); d.id='tmsg'; d.className='typing';
-  d.innerHTML=`<div class="av ai">🤖</div><div class="tdots"><span></span><span></span><span></span></div>`;
+function addTyping() {
+  const d = document.createElement('div'); d.id = 'tmsg'; d.className = 'typing';
+  d.innerHTML = `<div class="av ai">🤖</div><div class="tdots"><span></span><span></span><span></span></div>`;
   document.getElementById('cw').appendChild(d); scrollBot();
 }
-function rmTyping(){ document.getElementById('tmsg')?.remove(); }
-function addUser(t){
-  const d=document.createElement('div'); d.className='msg user';
-  d.innerHTML=`<div class="av u">👤</div><div class="bbl user">${esc(t)}</div>`;
+function rmTyping() { document.getElementById('tmsg')?.remove(); }
+function addUser(t) {
+  const d = document.createElement('div'); d.className = 'msg user';
+  d.innerHTML = `<div class="av u">👤</div><div class="bbl user">${esc(t)}</div>`;
   document.getElementById('cw').appendChild(d); scrollBot();
 }
-function scrollBot(){ setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),50); }
-function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function scrollBot() { setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 50); }
+function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ============================================================
-// RESULTS
-// ============================================================
-function showResults(){
+// ── RESULTS ──
+function showResults() {
   clearInterval(S.timerInt);
   goTo('page-result');
-  document.getElementById('rrbadge').textContent=S.role;
-  document.getElementById('rqbadge').textContent=`${S.count} Questions`;
+  document.getElementById('rrbadge').textContent = S.role;
+  document.getElementById('rqbadge').textContent = `${S.count} Questions`;
 
-  const valid=S.feedbacks.filter(Boolean);
-  const avg=valid.length?Math.round(valid.reduce((s,f)=>s+f.score,0)/valid.length*10):0;
-  const chances=Math.min(92,Math.max(8,avg-8+Math.round(avg*.12)));
-  const dim=k=>valid.length?(valid.reduce((s,f)=>s+(f[k]||0),0)/valid.length).toFixed(1):0;
+  const valid   = S.feedbacks.filter(Boolean);
+  const avg     = valid.length ? Math.round(valid.reduce((s, f) => s + f.score, 0) / valid.length * 10) : 0;
+  const chances = Math.min(92, Math.max(8, avg - 8 + Math.round(avg * .12)));
+  const dim     = k => valid.length ? (valid.reduce((s, f) => s + (f[k] || 0), 0) / valid.length).toFixed(1) : '0.0';
 
-  setTimeout(()=>{
-    document.getElementById('rfill').style.strokeDashoffset=364.4*(1-avg/100);
-    animN('rscore',0,avg,1400);
-    animN('cpct',0,chances,1400,'%');
-    setTimeout(()=>document.getElementById('bfill').style.width=chances+'%',100);
-  },300);
+  setTimeout(() => {
+    document.getElementById('rfill').style.strokeDashoffset = 364.4 * (1 - avg / 100);
+    animN('rscore', 0, avg, 1400);
+    animN('cpct', 0, chances, 1400, '%');
+    setTimeout(() => document.getElementById('bfill').style.width = chances + '%', 100);
+  }, 300);
 
-  const [verd,vsub]=avg>=75?['Excellent Performance! 🏆','You\'re well-prepared. A few polish points and you\'re ready.']
-    :avg>=55?['Good Effort! 👍','Work on depth and specific examples.']
-    :avg>=35?['Keep Practicing 💪','Focus on real examples and structured answers.']
-    :['Keep Going! 🌱','Review every feedback card and retry next week.'];
-  document.getElementById('rverdict').textContent=verd;
-  document.getElementById('rvsub').textContent=vsub;
+  const [verd, vsub] = avg >= 75
+    ? ['Excellent Performance 🏆', 'You\'re well-prepared — a few polish points and you\'re ready to apply.']
+    : avg >= 55
+    ? ['Good Effort 👍', 'Solid foundation. Focus on adding specific examples to strengthen your answers.']
+    : avg >= 35
+    ? ['Keep Practising 💪', 'Focus on real examples, STAR structure, and specific technical details.']
+    : ['Keep Going 🌱', 'Review every feedback card, then retry this session next week.'];
 
-  document.getElementById('bgrid').innerHTML=[
-    ['Relevance',dim('relevance')+'/10','#6c63ff'],
-    ['Clarity',dim('clarity')+'/10','#34d399'],
-    ['Depth',dim('depth')+'/10','#fbbf24'],
-    ['Communication',dim('communication')+'/10','#a78bfa']
-  ].map(([l,v,c])=>`<div class="bcard"><div class="bclbl">${l}</div><div class="bcval" style="color:${c}">${v}</div></div>`).join('');
+  document.getElementById('rverdict').textContent = verd;
+  document.getElementById('rvsub').textContent = vsub;
 
-  const tips=makeTips(avg,dim('relevance'),dim('clarity'),dim('depth'),dim('communication'));
-  document.getElementById('tlist').innerHTML=tips.map(t=>`<div class="tip"><span>${t.i}</span><span>${t.t}</span></div>`).join('');
+  document.getElementById('result-stats').innerHTML = [
+    ['Relevance', dim('relevance') + '/10', '#00d9a5'],
+    ['Clarity',   dim('clarity')   + '/10', '#4a9eff'],
+    ['Depth',     dim('depth')     + '/10', '#f0b429'],
+    ['Communication', dim('communication') + '/10', '#a78bfa']
+  ].map(([l, v, c]) => `
+    <div class="rstat-card">
+      <div class="rstat-lbl">${l}</div>
+      <div class="rstat-val" style="color:${c}">${v}</div>
+    </div>`).join('');
+
+  const tips = makeTips(avg, dim('relevance'), dim('clarity'), dim('depth'), dim('communication'));
+  document.getElementById('tlist').innerHTML = tips
+    .map(t => `<div class="tip-row"><span class="tip-icon">${t.i}</span><span>${t.t}</span></div>`)
+    .join('');
 }
 
-function makeTips(avg,rel,clar,dep,comm){
-  const tips=[];
-  if(parseFloat(dep)<6) tips.push({i:'🔍',t:'Be specific. Name the project, tool, team size, or measurable result. Vague answers don\'t impress.'});
-  if(parseFloat(rel)<6) tips.push({i:'🎯',t:'Identify exactly what the question asks before answering. Focused and relevant beats long and off-topic.'});
-  if(parseFloat(clar)<6) tips.push({i:'🗂️',t:'Use STAR for behavioral questions: Situation → Task → Action → Result. It adds instant structure.'});
-  if(parseFloat(comm)<6) tips.push({i:'💬',t:'Open with a one-sentence summary of your point, then expand. It signals confidence.'});
-  if(avg<60) tips.push({i:'⭐',t:'Practice speaking answers aloud for 10 minutes daily. Speaking reveals gaps that thinking silently doesn\'t.'});
-  tips.push({i:'📚',t:`Research the top 3 tools and trends for ${S.role}. Weaving them naturally into answers shows genuine preparation.`});
-  tips.push({i:'🔄',t:'Write improved answers to today\'s questions and repeat this interview next week. Improvement is measurable.'});
-  return tips.slice(0,5);
+function makeTips(avg, rel, clar, dep, comm) {
+  const tips = [];
+  if (parseFloat(dep)  < 6) tips.push({ i: '🔍', t: 'Be specific. Name the project, tool, team size, or measurable result. Vague answers don\'t impress.' });
+  if (parseFloat(rel)  < 6) tips.push({ i: '🎯', t: 'Identify exactly what the question asks before answering. Focused and relevant beats long and off-topic.' });
+  if (parseFloat(clar) < 6) tips.push({ i: '🗂️', t: 'Use STAR for behavioural questions: Situation → Task → Action → Result. It adds instant structure.' });
+  if (parseFloat(comm) < 6) tips.push({ i: '💬', t: 'Open with a one-sentence summary of your point, then expand. It signals confidence.' });
+  if (avg < 60) tips.push({ i: '⭐', t: 'Practice speaking answers aloud for 10 minutes daily. Speaking reveals gaps that thinking silently doesn\'t.' });
+  tips.push({ i: '📚', t: `Research the top 3 tools and trends for ${S.role}. Weaving them naturally into answers shows genuine preparation.` });
+  tips.push({ i: '🔄', t: 'Write improved answers to today\'s questions and repeat this interview next week. Improvement is measurable.' });
+  return tips.slice(0, 5);
 }
 
-function animN(id,from,to,dur,suf=''){
-  const el=document.getElementById(id), t0=performance.now();
-  const tick=now=>{ const t=Math.min(1,(now-t0)/dur); el.textContent=Math.round(from+(to-from)*(1-(1-t)**3))+suf; if(t<1)requestAnimationFrame(tick); };
+function animN(id, from, to, dur, suf = '') {
+  const el = document.getElementById(id), t0 = performance.now();
+  const tick = now => {
+    const t = Math.min(1, (now - t0) / dur);
+    el.textContent = Math.round(from + (to - from) * (1 - (1 - t) ** 3)) + suf;
+    if (t < 1) requestAnimationFrame(tick);
+  };
   requestAnimationFrame(tick);
 }
 
-// ============================================================
-// LOADING
-// ============================================================
-function showLoad(t,s){ document.getElementById('ltit').textContent=t; document.getElementById('lsub').textContent=s; document.getElementById('lov').classList.add('on'); }
-function hideLoad(){ document.getElementById('lov').classList.remove('on'); }
-function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function showLoad(t, s) {
+  document.getElementById('ltit').textContent = t;
+  document.getElementById('lsub').textContent = s;
+  document.getElementById('lov').classList.add('on');
+}
+function hideLoad() { document.getElementById('lov').classList.remove('on'); }
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>
